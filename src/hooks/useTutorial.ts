@@ -2,16 +2,15 @@
 import { useContext } from 'react';
 import { ContextoTutorial } from '../context/TutorialContext';
 
-// Exportamos primero el hook con el nombre original para mantener compatibilidad
-export const useTutorial = () => {
+export const usarTutorial = () => {
   const contexto = useContext(ContextoTutorial);
   
   if (contexto === undefined) {
-    throw new Error('useTutorial debe ser usado dentro de un ProveedorTutorial');
+    throw new Error('usarTutorial debe ser usado dentro de un ProveedorTutorial');
   }
   
   return contexto;
 };
 
-// Alias en español (exportamos el mismo hook con otro nombre)
-export { useTutorial as usarTutorial };
+// Mantenemos el nombre en inglés para compatibilidad hacia atrás
+export { usarTutorial as useTutorial };

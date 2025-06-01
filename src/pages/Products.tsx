@@ -5,7 +5,7 @@ import { Search } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import Container from '@/components/layout/Container';
+import Contenedor from '@/components/layout/Container';
 import ProductCard from '@/components/product/ProductCard';
 import { fetchFeaturedProducts } from '@/services/productApi';
 import { Product } from '@/types';
@@ -59,7 +59,7 @@ const Products = () => {
       <Navbar />
       
       <main>
-        <Container className="py-16">
+        <Contenedor className="py-16">
           <div className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl font-bold text-[#111816] mb-4">
               Artesanías del Chocó
@@ -122,7 +122,7 @@ const Products = () => {
               <p>No se encontraron productos que coincidan con tu búsqueda.</p>
             </div>
           )}
-        </Container>
+        </Contenedor>
       </main>
 
       <Footer />
