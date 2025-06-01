@@ -1,15 +1,16 @@
 
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Search } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Contenedor from '@/components/layout/Container';
 import ProductCard from '@/components/product/ProductCard';
+import AdvancedSearch from '@/components/search/AdvancedSearch';
 import { fetchFeaturedProducts } from '@/services/productApi';
 import { Product } from '@/types';
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAppContext } from '@/context/AppContext';
 
 const categories = [
   { id: 'all', name: 'Todos', slug: 'all' },
@@ -20,8 +21,8 @@ const categories = [
 ];
 
 const Products = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const { state, dispatch } = useAppContext();
+  const { searchQuery, selectedCategory } = state;
 
   const { 
     data: products = [], 
@@ -33,9 +34,14 @@ const Products = () => {
   });
 
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
+    const matchesSearch = searchQuery === '' || 
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesCategory = selectedCategory === 'all' || 
+      product.categoryId.toString() === selectedCategory;
+    
+    return matchesSearch && matchesCategory;
   });
 
   const renderSkeletons = () => (
@@ -61,26 +67,17 @@ const Products = () => {
       <main>
         <Contenedor className="py-16">
           <div className="text-center mb-12">
-            <h1 className="text-3xl md:text-4xl font-bold text-[#111816] mb-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-[#111816] dark:text-white mb-4">
               Artesanías del Chocó
             </h1>
-            <p className="text-lg text-[#608a7c] max-w-2xl mx-auto">
+            <p className="text-lg text-[#608a7c] dark:text-gray-300 max-w-2xl mx-auto">
               Descubre nuestra colección completa de productos artesanales hechos a mano por maestros artesanos del Pacífico colombiano
             </p>
           </div>
 
-          {/* Search Bar */}
-          <div className="mb-8">
-            <div className="relative max-w-md mx-auto">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#608a7c] w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Buscar productos..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border border-[#f0f5f3] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0cf2a5] bg-[#f0f5f3] text-[#111816]"
-              />
-            </div>
+          {/* Búsqueda Avanzada */}
+          <div className="mb-8 max-w-2xl mx-auto">
+            <AdvancedSearch />
           </div>
 
           {/* Category Filters */}
@@ -88,11 +85,11 @@ const Products = () => {
             {categories.map((category) => (
               <button
                 key={category.id}
-                onClick={() => setSelectedCategory(category.slug)}
+                onClick={() => dispatch({ type: 'SET_SELECTED_CATEGORY', payload: category.slug })}
                 className={`px-6 py-2 rounded-xl text-sm font-medium transition-colors ${
                   selectedCategory === category.slug
                     ? 'bg-[#0cf2a5] text-white'
-                    : 'bg-[#f0f5f3] text-[#111816] hover:bg-[#0cf2a5] hover:text-white'
+                    : 'bg-[#f0f5f3] dark:bg-gray-700 text-[#111816] dark:text-white hover:bg-[#0cf2a5] hover:text-white'
                 }`}
               >
                 {category.name}
@@ -118,7 +115,7 @@ const Products = () => {
           )}
 
           {!isLoading && !isError && filteredProducts.length === 0 && (
-            <div className="text-center text-[#608a7c] py-12">
+            <div className="text-center text-[#608a7c] dark:text-gray-400 py-12">
               <p>No se encontraron productos que coincidan con tu búsqueda.</p>
             </div>
           )}
