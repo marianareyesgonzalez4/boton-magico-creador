@@ -1,209 +1,232 @@
 
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
-import Header from '@/components/layout/Header';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
-import Container from '@/components/layout/Container';
-import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Link, useNavigate } from "react-router-dom";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { useStore } from "@/store/useStore";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [loading, setLoading] = useState(false);
   
-  const { register } = useAuth();
-  const { toast } = useToast();
+  const { login } = useStore();
+  const { showSuccess, showError } = useNotifications();
   const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: value
     }));
+  };
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (formData.password !== formData.confirmPassword) {
-      toast({
-        title: "Error",
-        description: "Las contraseñas no coinciden",
-        variant: "destructive",
-      });
+    setLoading(true);
+
+    // Validation
+    if (!acceptTerms) {
+      showError("Debes aceptar los términos y condiciones");
+      setLoading(false);
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      await register({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password
-      });
-      toast({
-        title: "¡Bienvenido!",
-        description: "Tu cuenta ha sido creada exitosamente",
-      });
-      navigate('/');
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "No se pudo crear la cuenta. Inténtalo de nuevo.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.confirmPassword) {
+      showError("Por favor, completa todos los campos");
+      setLoading(false);
+      return;
     }
+
+    if (!validateEmail(formData.email)) {
+      showError("Por favor, ingresa un email válido");
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      showError("Las contraseñas no coinciden");
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      showError("La contraseña debe tener al menos 6 caracteres");
+      setLoading(false);
+      return;
+    }
+
+    // Simulate API call
+    setTimeout(() => {
+      const userData = {
+        id: "user-" + Date.now(),
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName
+      };
+      
+      login(userData);
+      showSuccess("¡Cuenta creada exitosamente! Bienvenido a Chocó Artesanal");
+      navigate("/profile");
+      setLoading(false);
+    }, 1000);
   };
 
   return (
-    <div className="min-h-screen choco-bg-primary transition-colors duration-300">
+    <div className="min-h-screen bg-white">
       <Header />
-      <Navbar />
       
-      <main>
-        <Container className="py-16">
-          <div className="max-w-md mx-auto">
+      <main className="container mx-auto px-4 py-16">
+        <div className="max-w-md mx-auto">
+          <div className="bg-white border border-secondary/20 rounded-xl p-8 shadow-lg">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold choco-text-primary mb-4">
+              <h1 className="text-3xl font-bold text-primary mb-2">
                 Crear Cuenta
               </h1>
-              <p className="choco-text-secondary">
-                Únete a nuestra comunidad y descubre las maravillas del Chocó
+              <p className="text-secondary">
+                Únete a la comunidad de Chocó Artesanal
               </p>
             </div>
 
-            <div className="choco-card-bg p-8 rounded-2xl shadow-sm choco-border border">
-              <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium choco-text-primary mb-2">
-                    Nombre Completo
-                  </label>
-                  <input
+                  <Label htmlFor="firstName" className="text-primary">
+                    Nombre
+                  </Label>
+                  <Input
+                    id="firstName"
+                    name="firstName"
                     type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 choco-border border rounded-xl focus:outline-none focus:ring-2 focus:ring-choco-cta bg-background text-foreground"
-                    placeholder="Tu nombre completo"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    className="mt-1 border-secondary/30 focus:border-action"
+                    placeholder="Tu nombre"
                   />
                 </div>
-
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium choco-text-primary mb-2">
-                    Correo Electrónico
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
+                  <Label htmlFor="lastName" className="text-primary">
+                    Apellido
+                  </Label>
+                  <Input
+                    id="lastName"
+                    name="lastName"
+                    type="text"
                     required
-                    className="w-full px-4 py-3 choco-border border rounded-xl focus:outline-none focus:ring-2 focus:ring-choco-cta bg-background text-foreground"
-                    placeholder="tu@email.com"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    className="mt-1 border-secondary/30 focus:border-action"
+                    placeholder="Tu apellido"
                   />
                 </div>
-
-                <div>
-                  <label htmlFor="password" className="block text-sm font-medium choco-text-primary mb-2">
-                    Contraseña
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      id="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 pr-12 choco-border border rounded-xl focus:outline-none focus:ring-2 focus:ring-choco-cta bg-background text-foreground"
-                      placeholder="••••••••"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 choco-text-secondary hover:text-choco-cta"
-                    >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium choco-text-primary mb-2">
-                    Confirmar Contraseña
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 pr-12 choco-border border rounded-xl focus:outline-none focus:ring-2 focus:ring-choco-cta bg-background text-foreground"
-                      placeholder="••••••••"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 choco-text-secondary hover:text-choco-cta"
-                    >
-                      {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="flex items-center">
-                    <input type="checkbox" required className="mr-2 accent-choco-cta" />
-                    <span className="text-sm choco-text-secondary">
-                      Acepto los{' '}
-                      <Link to="/terms" className="text-choco-cta hover:underline">
-                        términos y condiciones
-                      </Link>{' '}
-                      y la{' '}
-                      <Link to="/privacy" className="text-choco-cta hover:underline">
-                        política de privacidad
-                      </Link>
-                    </span>
-                  </label>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full choco-cta text-white py-3 rounded-xl font-medium transition-all disabled:opacity-50"
-                >
-                  {isLoading ? 'Creando cuenta...' : 'Crear Cuenta'}
-                </button>
-              </form>
-
-              <div className="mt-8 text-center">
-                <p className="choco-text-secondary">
-                  ¿Ya tienes cuenta?{' '}
-                  <Link to="/login" className="text-choco-cta font-medium hover:underline">
-                    Inicia sesión aquí
-                  </Link>
-                </p>
               </div>
+
+              <div>
+                <Label htmlFor="email" className="text-primary">
+                  Correo Electrónico
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="mt-1 border-secondary/30 focus:border-action"
+                  placeholder="tu@email.com"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="password" className="text-primary">
+                  Contraseña
+                </Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="mt-1 border-secondary/30 focus:border-action"
+                  placeholder="Mínimo 6 caracteres"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="confirmPassword" className="text-primary">
+                  Confirmar Contraseña
+                </Label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  className="mt-1 border-secondary/30 focus:border-action"
+                  placeholder="Repite tu contraseña"
+                />
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <Checkbox
+                  id="terms"
+                  checked={acceptTerms}
+                  onCheckedChange={(checked) => {
+                    setAcceptTerms(checked === true);
+                  }}
+                />
+                <label htmlFor="terms" className="text-sm text-secondary leading-relaxed cursor-pointer">
+                  Acepto los{" "}
+                  <Link to="/terms" className="text-action hover:underline">
+                    términos y condiciones
+                  </Link>{" "}
+                  y la{" "}
+                  <Link to="/privacy" className="text-action hover:underline">
+                    política de privacidad
+                  </Link>
+                </label>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={loading || !acceptTerms}
+                className="w-full bg-action hover:bg-action/90 text-white py-3 text-lg font-semibold disabled:opacity-50"
+              >
+                {loading ? "Creando cuenta..." : "Crear Cuenta"}
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-secondary">
+                ¿Ya tienes una cuenta?{" "}
+                <Link to="/login" className="text-action hover:underline font-semibold">
+                  Inicia sesión
+                </Link>
+              </p>
             </div>
           </div>
-        </Container>
+        </div>
       </main>
 
       <Footer />
