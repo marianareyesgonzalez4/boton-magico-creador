@@ -1,16 +1,13 @@
 
 import { useContext } from 'react';
-import { ContextoTutorial } from '../context/TutorialContext';
+import { TutorialContext } from '../context/TutorialContext';
 
-export const usarTutorial = () => {
-  const contexto = useContext(ContextoTutorial);
+export const useTutorial = () => {
+  const context = useContext(TutorialContext);
   
-  if (contexto === undefined) {
-    throw new Error('usarTutorial debe ser usado dentro de un ProveedorTutorial');
+  if (context === undefined) {
+    throw new Error('useTutorial must be used within a TutorialProvider');
   }
   
-  return contexto;
+  return context;
 };
-
-// Mantenemos el nombre en inglés para compatibilidad hacia atrás
-export { usarTutorial as useTutorial };
