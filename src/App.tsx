@@ -1,8 +1,11 @@
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Toaster } from '@/components/ui/sonner';
+import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { AuthProvider } from '@/context/AuthContextEnhanced';
+import CookieBanner from '@/components/CookieBanner';
+import ProjectBanner from '@/components/ProjectBanner';
 
 // Pages
 import Index from '@/pages/Index';
@@ -26,30 +29,33 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light" storageKey="choco-artesanal-theme">
-        <Router>
-          <div className="App">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/shop" element={<Shop />} />
-              <Route path="/products" element={<Shop />} />
-              <Route path="/product-detail" element={<ProductDetail />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/guest-checkout" element={<GuestCheckout />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/stories" element={<Stories />} />
-              <Route path="/story-detail" element={<StoryDetail />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/order-confirmation" element={<OrderConfirmation />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <Toaster />
-          </div>
-        </Router>
+        <AuthProvider>
+          <Router>
+            <div className="App">
+              <ProjectBanner />
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/shop" element={<Shop />} />
+                <Route path="/product-detail" element={<ProductDetail />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/guest-checkout" element={<GuestCheckout />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/stories" element={<Stories />} />
+                <Route path="/story-detail" element={<StoryDetail />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/order-confirmation" element={<OrderConfirmation />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <Toaster />
+              <CookieBanner />
+            </div>
+          </Router>
+        </AuthProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

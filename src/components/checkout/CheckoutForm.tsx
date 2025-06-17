@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { CreditCard, MapPin, User, Phone, Mail } from 'lucide-react';
 import { useCartOptimized } from '@/hooks/useCartOptimized';
 import { useAuthEnhanced } from '@/context/AuthContextEnhanced';
-import { useToast } from '@/hooks/useToast';
+import { useNotifications } from '@/hooks/useNotifications';
 
 interface CheckoutData {
   email: string;
@@ -18,7 +17,7 @@ interface CheckoutData {
 const CheckoutForm: React.FC = () => {
   const { items, total, clearCart } = useCartOptimized();
   const { user, isAuthenticated } = useAuthEnhanced();
-  const { success, error } = useToast();
+  const { showSuccess, showError } = useNotifications();
   
   const [checkoutData, setCheckoutData] = useState<CheckoutData>({
     email: user?.email || '',
@@ -40,7 +39,7 @@ const CheckoutForm: React.FC = () => {
     e.preventDefault();
     
     if (items.length === 0) {
-      error('El carrito está vacío');
+      showError('El carrito está vacío');
       return;
     }
 
@@ -53,14 +52,14 @@ const CheckoutForm: React.FC = () => {
       // Aquí iría la integración con Stripe u otro procesador de pagos
       console.log('Procesando pago:', { checkoutData, items, total });
       
-      success('¡Pedido realizado con éxito!');
+      showSuccess('¡Pedido realizado con éxito!');
       clearCart();
       
       // Redirigir a página de confirmación
       window.location.href = '/pedido-confirmado';
       
     } catch (err) {
-      error('Error al procesar el pago');
+      showError('Error al procesar el pago');
     } finally {
       setIsProcessing(false);
     }

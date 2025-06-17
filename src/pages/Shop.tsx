@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "@/components/ProductCard";
@@ -10,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Filter, Grid, List, SlidersHorizontal } from "lucide-react";
+import { PRODUCT_CATEGORIES, PRICE_RANGES, SORT_OPTIONS } from "@/constants/categories";
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
@@ -110,15 +112,16 @@ const Shop = () => {
       
       let priceMatch = true;
       if (filters.priceRange !== "all") {
-        if (filters.priceRange === "low") priceMatch = product.price < 100000;
-        else if (filters.priceRange === "medium") priceMatch = product.price >= 100000 && product.price <= 200000;
-        else if (filters.priceRange === "high") priceMatch = product.price > 200000;
+        const priceRange = PRICE_RANGES.find(range => range.id === filters.priceRange);
+        if (priceRange) {
+          priceMatch = product.price >= priceRange.min && product.price <= priceRange.max;
+        }
       }
       
       return categoryMatch && searchMatch && artisanMatch && priceMatch;
     });
 
-    // Ordenar
+    // Ordenar usando SORT_OPTIONS
     if (filters.sortBy === "price-low") {
       filtered = filtered.sort((a, b) => a.price - b.price);
     } else if (filters.sortBy === "price-high") {
@@ -218,9 +221,9 @@ const Shop = () => {
                 <SelectValue placeholder="Ordenar por" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="name">Nombre (A-Z)</SelectItem>
-                <SelectItem value="price-low">Precio (Menor a Mayor)</SelectItem>
-                <SelectItem value="price-high">Precio (Mayor a Menor)</SelectItem>
+                {SORT_OPTIONS.map(option => (
+                  <SelectItem key={option.id} value={option.id}>{option.name}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -266,13 +269,9 @@ const Shop = () => {
                       <SelectValue placeholder="Seleccionar categoría" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Todas las categorías</SelectItem>
-                      <SelectItem value="cesteria">Cestería</SelectItem>
-                      <SelectItem value="tallado">Tallado</SelectItem>
-                      <SelectItem value="joyeria">Joyería</SelectItem>
-                      <SelectItem value="musica">Música</SelectItem>
-                      <SelectItem value="textiles">Textiles</SelectItem>
-                      <SelectItem value="ceramica">Cerámica</SelectItem>
+                      {PRODUCT_CATEGORIES.map(category => (
+                        <SelectItem key={category.id} value={category.slug}>{category.name}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -287,10 +286,9 @@ const Shop = () => {
                       <SelectValue placeholder="Seleccionar rango" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Todos los precios</SelectItem>
-                      <SelectItem value="low">Menos de $100.000</SelectItem>
-                      <SelectItem value="medium">$100.000 - $200.000</SelectItem>
-                      <SelectItem value="high">Más de $200.000</SelectItem>
+                      {PRICE_RANGES.map(range => (
+                        <SelectItem key={range.id} value={range.id}>{range.name}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>

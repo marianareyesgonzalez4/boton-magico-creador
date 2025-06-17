@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '@/types';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@/hooks/use-toast';
 
 interface AuthContextType {
   user: User | null;
@@ -18,7 +18,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { success, error } = useToast();
+  const { toast } = useToast();
 
   useEffect(() => {
     // Verificar si hay usuario guardado en localStorage
@@ -46,12 +46,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setUser(mockUser);
       localStorage.setItem('user', JSON.stringify(mockUser));
-      success('Inicio de sesión exitoso');
+      toast({
+        title: "Éxito",
+        description: "Inicio de sesión exitoso"
+      });
       setIsLoading(false);
       return true;
     }
     
-    error('Credenciales inválidas');
+    toast({
+      title: "Error",
+      description: "Credenciales inválidas",
+      variant: "destructive"
+    });
     setIsLoading(false);
     return false;
   };
@@ -73,12 +80,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setUser(mockUser);
       localStorage.setItem('user', JSON.stringify(mockUser));
-      success('Registro exitoso');
+      toast({
+        title: "Éxito",
+        description: "Registro exitoso"
+      });
       setIsLoading(false);
       return true;
     }
     
-    error('Error en el registro');
+    toast({
+      title: "Error",
+      description: "Error en el registro",
+      variant: "destructive"
+    });
     setIsLoading(false);
     return false;
   };
@@ -86,7 +100,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
-    success('Sesión cerrada');
+    toast({
+      title: "Éxito",
+      description: "Sesión cerrada"
+    });
   };
 
   const isAuthenticated = !!user;
