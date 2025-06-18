@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Search, ShoppingCart, Menu, X, User, Settings, LogOut, Heart, Phone, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuthEnhanced } from '@/context/AuthContextEnhanced';
 import { useCart } from '@/hooks/useCart';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import Logo from '@/components/Logo';
@@ -19,7 +19,7 @@ import {
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout } = useAuthEnhanced();
   const { itemCount } = useCart();
   const location = useLocation();
 
