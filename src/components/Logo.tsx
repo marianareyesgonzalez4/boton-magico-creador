@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 
 interface LogoProps {
@@ -29,20 +28,20 @@ const Logo = ({
   };
 
   const iconColorClass = {
-    default: "text-emerald-600",
+    default: "text-amber-600",
     white: "text-white",
     brown: "text-amber-900"
   };
 
   const textColorClass = {
-    default: "text-gray-800",
+    default: "text-primary-text",
     white: "text-white",
     brown: "text-amber-900"
   };
 
   return (
-    <div className={cn("flex items-center space-x-3", className)}>
-      {/* Logo SVG representativo del Chocó */}
+    <div className={cn("flex items-center space-x-2", className)}>
+      {/* Logo SVG */}
       <div className={cn("relative", sizeClasses[size])}>
         <svg
           viewBox="0 0 64 64"
@@ -50,78 +49,67 @@ const Logo = ({
           xmlns="http://www.w3.org/2000/svg"
           className={cn("w-full h-full", iconColorClass[variant])}
         >
-          {/* Fondo circular con gradiente */}
+          {/* Fondo circular con gradiente café */}
           <circle
             cx="32"
             cy="32"
             r="30"
-            fill="url(#backgroundGradient)"
+            fill="url(#brownGradient)"
             stroke="currentColor"
             strokeWidth="2"
           />
           
-          {/* Palma representativa del Pacífico */}
+          {/* Hoja de cacao estilizada */}
           <path
-            d="M32 10L32 54M20 18C24 14 28 12 32 12C36 12 40 14 44 18M18 30C22 26 27 24 32 24C37 24 42 26 46 30M16 42C20 38 26 36 32 36C38 36 44 38 48 42"
-            stroke="url(#palmGradient)"
-            strokeWidth="2.5"
+            d="M20 28C20 22 24 18 32 18C40 18 44 22 44 28C44 34 40 38 32 45C24 38 20 34 20 28Z"
+            fill="url(#leafGradient)"
+            stroke="currentColor"
+            strokeWidth="1"
+          />
+          
+          {/* Venas de la hoja */}
+          <path
+            d="M32 20V42M26 25L32 30M38 25L32 30M26 35L32 40M38 35L32 40"
+            stroke="url(#veinGradient)"
+            strokeWidth="1.5"
             strokeLinecap="round"
-            fill="none"
+            opacity="0.7"
           />
           
-          {/* Hojas de la palma */}
-          <path
-            d="M32 12L26 20L32 24L38 20L32 12Z"
-            fill="url(#leafGradient)"
-            stroke="currentColor"
-            strokeWidth="1"
-          />
-          <path
-            d="M32 24L24 32L32 36L40 32L32 24Z"
-            fill="url(#leafGradient)"
-            stroke="currentColor"
-            strokeWidth="1"
-          />
-          <path
-            d="M32 36L22 44L32 48L42 44L32 36Z"
-            fill="url(#leafGradient)"
-            stroke="currentColor"
-            strokeWidth="1"
-          />
-          
-          {/* Elementos decorativos tradicionales */}
-          <circle cx="20" cy="52" r="2" fill="url(#accentGradient)" />
-          <circle cx="32" cy="54" r="2" fill="url(#accentGradient)" />
-          <circle cx="44" cy="52" r="2" fill="url(#accentGradient)" />
+          {/* Granos de cacao pequeños */}
+          <circle cx="24" cy="50" r="2.5" fill="url(#beanGradient)" />
+          <circle cx="32" cy="52" r="2.5" fill="url(#beanGradient)" />
+          <circle cx="40" cy="50" r="2.5" fill="url(#beanGradient)" />
           
           {/* Gradientes */}
           <defs>
-            <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#065f46" />
-              <stop offset="50%" stopColor="#047857" />
-              <stop offset="100%" stopColor="#059669" />
-            </linearGradient>
-            
-            <linearGradient id="palmGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#f59e0b" />
-              <stop offset="100%" stopColor="#d97706" />
+            <linearGradient id="brownGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#8B4513" />
+              <stop offset="50%" stopColor="#A0522D" />
+              <stop offset="100%" stopColor="#D2691E" />
             </linearGradient>
             
             <linearGradient id="leafGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#10b981" />
-              <stop offset="50%" stopColor="#059669" />
-              <stop offset="100%" stopColor="#047857" />
+              <stop offset="0%" stopColor="#228B22" />
+              <stop offset="50%" stopColor="#32CD32" />
+              <stop offset="100%" stopColor="#90EE90" />
             </linearGradient>
             
-            <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#fbbf24" />
-              <stop offset="100%" stopColor="#f59e0b" />
+            <linearGradient id="veinGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#006400" />
+              <stop offset="100%" stopColor="#228B22" />
+            </linearGradient>
+            
+            <linearGradient id="beanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#4A4A4A" />
+              <stop offset="50%" stopColor="#8B4513" />
+              <stop offset="100%" stopColor="#A0522D" />
             </linearGradient>
           </defs>
         </svg>
         
         {/* Brillo decorativo */}
-        <div className="absolute top-1 right-1 w-2 h-2 bg-white/40 rounded-full blur-sm" />
+        <div className="absolute top-2 left-2 w-2 h-2 bg-white/30 rounded-full blur-sm" />
       </div>
 
       {/* Texto del logo */}
@@ -132,14 +120,14 @@ const Logo = ({
             textSizeClasses[size],
             textColorClass[variant]
           )}>
-            TesorosChocó
+            Chocó Artesanal
           </h1>
           <p className={cn(
             "text-xs font-medium leading-none opacity-80",
             textColorClass[variant],
             size === "sm" ? "text-[10px]" : "text-xs"
           )}>
-            Tradición del Pacífico
+            Tesoros del Pacífico
           </p>
         </div>
       )}
