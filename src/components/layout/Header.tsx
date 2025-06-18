@@ -1,12 +1,13 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, ShoppingCart, Menu, X, User, Settings, LogOut, TreePalm } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, User, Settings, LogOut, Heart, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/hooks/useCart';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import Logo from '@/components/Logo';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +18,7 @@ import {
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { user, isAuthenticated, logout } = useAuth();
   const { itemCount } = useCart();
@@ -25,129 +27,180 @@ const Header: React.FC = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/productos?buscar=${encodeURIComponent(searchQuery)}`;
+      window.location.href = `/shop?search=${encodeURIComponent(searchQuery)}`;
+      setIsSearchOpen(false);
     }
   };
 
+  const navLinks = [
+    { to: "/", label: "Inicio", active: location.pathname === "/" },
+    { to: "/shop", label: "Tienda", active: location.pathname === "/shop" },
+    { to: "/stories", label: "Historias", active: location.pathname === "/stories" },
+    { to: "/about", label: "Nosotros", active: location.pathname === "/about" },
+    { to: "/contact", label: "Contacto", active: location.pathname === "/contact" }
+  ];
+
   return (
-    <header className="bg-white dark:bg-gray-900 shadow-lg sticky top-0 z-50 transition-colors duration-200 border-b border-gray-200 dark:border-gray-700">
-      <div className="container-custom">
-        <div className="flex items-center justify-between h-18 py-4">
+    <header className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-lg sticky top-0 z-50 transition-all duration-300 border-b border-emerald-100 dark:border-gray-700">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-tesoros-green to-tesoros-blue rounded-lg flex items-center justify-center transform transition-transform group-hover:scale-105 shadow-sm">
-              <TreePalm className="text-white h-6 w-6" />
-            </div>
-            <div className="hidden sm:block">
-              <h1 className="text-xl font-bold text-tesoros-brown dark:text-white font-alternates">Tesoros<span className="text-tesoros-gold">Chocó</span></h1>
-              <p className="text-xs text-tesoros-brown/70 dark:text-gray-400">Tradición del Chocó</p>
-            </div>
+          <Link to="/" className="flex items-center group">
+            <Logo 
+              size="md" 
+              variant="default" 
+              showText={true}
+              className="transform transition-transform group-hover:scale-105"
+            />
           </Link>
 
-          {/* Buscador (Desktop) */}
-          <div className="hidden lg:block flex-1 max-w-md mx-8">
-            <form onSubmit={handleSearch} className="relative">
-              <Input
-                type="text"
-                placeholder="Buscar productos artesanales..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-4 pr-12 py-2 border-2 border-tesoros-gold/30 dark:border-gray-600 rounded-lg focus:border-tesoros-green dark:focus:border-tesoros-gold bg-white dark:bg-gray-800 text-tesoros-brown dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
-              />
-              <button
-                type="submit"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-tesoros-brown dark:text-gray-400 hover:text-tesoros-green dark:hover:text-tesoros-gold transition-colors"
+          {/* Navigation Desktop */}
+          <nav className="hidden lg:flex items-center space-x-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`relative px-3 py-2 font-medium transition-all duration-200 group ${
+                  link.active 
+                    ? 'text-emerald-600 dark:text-emerald-400' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400'
+                }`}
+              >
+                {link.label}
+                <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-emerald-500 transform transition-transform duration-200 ${
+                  link.active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                }`} />
+              </Link>
+            ))}
+          </nav>
+
+          {/* Search Desktop */}
+          <div className="hidden md:flex items-center space-x-4">
+            {isSearchOpen ? (
+              <form onSubmit={handleSearch} className="flex items-center space-x-2 animate-fade-in">
+                <Input
+                  type="text"
+                  placeholder="Buscar productos artesanales..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-64 border-emerald-200 focus:border-emerald-500 dark:border-gray-600 dark:focus:border-emerald-400"
+                  autoFocus
+                />
+                <Button 
+                  type="submit" 
+                  size="sm" 
+                  className="bg-emerald-600 hover:bg-emerald-700"
+                >
+                  <Search className="h-4 w-4" />
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setIsSearchOpen(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </form>
+            ) : (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400"
+                onClick={() => setIsSearchOpen(true)}
               >
                 <Search className="h-5 w-5" />
-              </button>
-            </form>
+              </Button>
+            )}
           </div>
 
-          {/* Acciones */}
-          <div className="flex items-center space-x-3">
-            {/* Toggle de tema */}
+          {/* Actions */}
+          <div className="flex items-center space-x-2">
+            {/* Theme Toggle */}
             <ThemeToggle />
 
-            {/* Carrito */}
-            <Link to="/carrito">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="relative h-9 w-9 rounded-md border border-tesoros-gold/30 dark:border-gray-600 bg-white/80 dark:bg-gray-800 hover:bg-tesoros-cream dark:hover:bg-gray-700 text-tesoros-brown dark:text-gray-300 hover:text-tesoros-green dark:hover:text-tesoros-gold transition-all"
-              >
-                <ShoppingCart className="h-4 w-4" />
+            {/* Wishlist */}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="relative text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400" 
+              asChild
+            >
+              <Link to="/wishlist">
+                <Heart className="h-5 w-5" />
+              </Link>
+            </Button>
+
+            {/* Cart */}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="relative text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400" 
+              asChild
+            >
+              <Link to="/cart">
+                <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
-                  <span className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-tesoros-red text-white text-xs flex items-center justify-center font-medium">
+                  <span className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-emerald-500 text-white text-xs flex items-center justify-center font-medium animate-scale-in">
                     {itemCount}
                   </span>
                 )}
-              </Button>
-            </Link>
+              </Link>
+            </Button>
 
-            {/* Autenticación */}
+            {/* Auth Section */}
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    size="icon"
-                    className="h-9 w-9 rounded-md border border-tesoros-gold/30 dark:border-gray-600 bg-white/80 dark:bg-gray-800 hover:bg-tesoros-cream dark:hover:bg-gray-700 text-tesoros-brown dark:text-gray-300 hover:text-tesoros-green dark:hover:text-tesoros-gold transition-all"
+                    size="sm"
+                    className="text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400"
                   >
-                    <User className="h-4 w-4" />
+                    <User className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                <DropdownMenuContent align="end" className="w-56">
                   <div className="px-3 py-2">
-                    <p className="text-sm font-medium text-tesoros-brown dark:text-white">{user?.name}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
+                    <p className="text-sm font-medium">{user?.name}</p>
+                    <p className="text-xs text-gray-500">{user?.email}</p>
                   </div>
-                  <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link to="/profile" className="flex items-center text-tesoros-brown dark:text-gray-300 hover:text-tesoros-green dark:hover:text-white hover:bg-tesoros-cream/50 dark:hover:bg-gray-700">
+                    <Link to="/profile" className="flex items-center">
                       <User className="mr-2 h-4 w-4" />
                       Mi Perfil
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/account-management" className="flex items-center text-tesoros-brown dark:text-gray-300 hover:text-tesoros-green dark:hover:text-white hover:bg-tesoros-cream/50 dark:hover:bg-gray-700">
+                    <Link to="/settings" className="flex items-center">
                       <Settings className="mr-2 h-4 w-4" />
-                      Gestión de Cuentas
+                      Configuración
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
-                  <DropdownMenuItem onClick={logout} className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20">
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logout} className="text-red-600">
                     <LogOut className="mr-2 h-4 w-4" />
                     Cerrar Sesión
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <div className="flex items-center space-x-2">
-                <Link to="/login">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-tesoros-green text-tesoros-green hover:bg-tesoros-green hover:text-white dark:border-tesoros-gold dark:text-tesoros-gold dark:hover:bg-tesoros-gold dark:hover:text-black transition-all shadow-sm"
-                  >
-                    Iniciar Sesión
-                  </Button>
-                </Link>
-                <Link to="/register">
-                  <Button
-                    size="sm"
-                    className="bg-tesoros-green hover:bg-tesoros-blue text-white shadow-lg dark:bg-tesoros-gold dark:hover:bg-tesoros-gold/90 dark:text-black transition-all"
-                  >
-                    Registrarse
-                  </Button>
-                </Link>
+              <div className="hidden sm:flex items-center space-x-2">
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/login">Iniciar Sesión</Link>
+                </Button>
+                <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" asChild>
+                  <Link to="/register">Registrarse</Link>
+                </Button>
               </div>
             )}
 
-            {/* Menú móvil */}
+            {/* Mobile Menu Toggle */}
             <Button
               variant="ghost"
-              size="icon"
-              className="lg:hidden h-9 w-9 text-tesoros-brown dark:text-gray-300 hover:text-tesoros-green dark:hover:text-tesoros-gold hover:bg-tesoros-cream/50 dark:hover:bg-gray-700"
+              size="sm"
+              className="lg:hidden text-gray-600 dark:text-gray-400"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -155,24 +208,74 @@ const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Menú móvil expandido */}
-        {isMenuOpen && (
-          <div className="lg:hidden border-t border-gray-200 dark:border-gray-700 py-4 bg-white dark:bg-gray-900">
-            <form onSubmit={handleSearch} className="relative mb-4">
+        {/* Mobile Search */}
+        {isSearchOpen && (
+          <div className="md:hidden border-t border-emerald-100 dark:border-gray-700 py-4">
+            <form onSubmit={handleSearch} className="flex items-center space-x-2">
               <Input
                 type="text"
                 placeholder="Buscar productos..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-4 pr-12 border-tesoros-gold/30 dark:border-gray-600 bg-white dark:bg-gray-800 text-tesoros-brown dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                className="flex-1 border-emerald-200 focus:border-emerald-500"
+                autoFocus
               />
-              <button
-                type="submit"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-tesoros-brown dark:text-gray-400 hover:text-tesoros-green dark:hover:text-tesoros-gold"
-              >
+              <Button type="submit" size="sm" className="bg-emerald-600 hover:bg-emerald-700">
                 <Search className="h-4 w-4" />
-              </button>
+              </Button>
             </form>
+          </div>
+        )}
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="lg:hidden border-t border-emerald-100 dark:border-gray-700 py-4 animate-slide-up">
+            <nav className="space-y-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={`block px-3 py-3 font-medium transition-colors ${
+                    link.active 
+                      ? 'text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-900/20' 
+                      : 'text-gray-700 dark:text-gray-300 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:text-emerald-400 dark:hover:bg-emerald-900/20'
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+
+            {!isAuthenticated && (
+              <div className="border-t border-emerald-100 dark:border-gray-700 pt-4 mt-4 space-y-2">
+                <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                  <Button variant="outline" className="w-full">
+                    Iniciar Sesión
+                  </Button>
+                </Link>
+                <Link to="/register" onClick={() => setIsMenuOpen(false)}>
+                  <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
+                    Registrarse
+                  </Button>
+                </Link>
+              </div>
+            )}
+
+            {/* Mobile Search Button */}
+            <div className="border-t border-emerald-100 dark:border-gray-700 pt-4 mt-4">
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => {
+                  setIsSearchOpen(!isSearchOpen);
+                  setIsMenuOpen(false);
+                }}
+              >
+                <Search className="mr-2 h-4 w-4" />
+                Buscar productos
+              </Button>
+            </div>
           </div>
         )}
       </div>
