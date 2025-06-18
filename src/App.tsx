@@ -23,6 +23,7 @@ import StoryDetail from '@/pages/StoryDetail';
 import NotFound from '@/pages/NotFound';
 import Terms from '@/pages/Terms';
 import OrderConfirmation from '@/pages/OrderConfirmation';
+import Wishlist from '@/pages/Wishlist';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
                 <Route path="/story-detail" element={<StoryDetail />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/order-confirmation" element={<OrderConfirmation />} />
+                <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <Toaster />

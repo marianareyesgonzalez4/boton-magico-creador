@@ -13,13 +13,8 @@ const CookieBanner = () => {
     }
   }, []);
 
-  const acceptCookies = () => {
-    localStorage.setItem('cookieConsent', 'accepted');
-    setShowBanner(false);
-  };
-
-  const rejectCookies = () => {
-    localStorage.setItem('cookieConsent', 'rejected');
+  const handleConsent = (accepted: boolean) => {
+    localStorage.setItem('cookieConsent', accepted ? 'accepted' : 'rejected');
     setShowBanner(false);
   };
 
@@ -74,7 +69,7 @@ const CookieBanner = () => {
             
             <div className="flex gap-3 flex-shrink-0 w-full md:w-auto">
               <Button
-                onClick={rejectCookies}
+                onClick={() => handleConsent(false)}
                 variant="outline"
                 size="sm"
                 className="flex-1 md:flex-none border-primary-secondary text-primary-secondary hover:bg-primary-secondary hover:text-white transition-all duration-200"
@@ -82,7 +77,7 @@ const CookieBanner = () => {
                 Rechazar
               </Button>
               <Button
-                onClick={acceptCookies}
+                onClick={() => handleConsent(true)}
                 className="flex-1 md:flex-none bg-primary-action hover:bg-primary-action/90 text-white shadow-lg transition-all duration-200 transform hover:scale-105"
                 size="sm"
               >
@@ -94,7 +89,7 @@ const CookieBanner = () => {
         
         {/* Close button */}
         <button
-          onClick={rejectCookies}
+          onClick={() => handleConsent(false)}
           className="absolute top-3 right-3 p-1 rounded-full hover:bg-primary-action/10 transition-colors"
           aria-label="Cerrar aviso"
         >
