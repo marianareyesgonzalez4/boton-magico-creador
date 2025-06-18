@@ -23,14 +23,31 @@
 @keyframes slide-up {
   from {
     transform: translateY(100%);
+    opacity: 0;
   }
   to {
     transform: translateY(0);
+    opacity: 1;
   }
 }
 
 .animate-slide-up {
-  animation: slide-up 0.3s ease-out;
+  animation: slide-up 0.4s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
 }
 
 /* Custom image styles */
@@ -53,7 +70,7 @@
 
 .card-hover-effect:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1), 0 10px 20px -5px rgba(0, 0, 0, 0.04);
 }
 
 /* Mobile-first responsive utilities */
@@ -62,7 +79,7 @@
 }
 
 .btn-modern-primary {
-  @apply btn-modern bg-[#0cf2a5] text-white hover:bg-[#0cf2a5]/90 shadow-lg hover:shadow-xl transform hover:scale-105;
+  @apply btn-modern bg-amber-600 text-white hover:bg-amber-700 shadow-lg hover:shadow-xl transform hover:scale-105;
 }
 
 .container-custom {
@@ -84,7 +101,7 @@
 
 /* Improved focus states for accessibility */
 .focus-visible {
-  @apply focus:outline-none focus:ring-2 focus:ring-primary-action focus:ring-offset-2;
+  @apply focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2;
 }
 
 /* Mobile menu animations */
@@ -118,4 +135,54 @@
 .smooth-scroll {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+}
+
+/* Custom gradient backgrounds */
+.bg-choco-gradient {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #92400e 100%);
+}
+
+.bg-pacific-gradient {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #0369a1 100%);
+}
+
+/* Header enhancements */
+.header-shadow {
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo animations */
+.logo-pulse {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Cookie banner styles */
+.cookie-banner-shadow {
+  box-shadow: 0 -10px 40px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Navigation hover effects */
+.nav-item::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -5px;
+  left: 50%;
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-item:hover::after {
+  width: 100%;
+}
+
+/* Responsive text shadows for better readability */
+.text-shadow-sm {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.text-shadow-md {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
