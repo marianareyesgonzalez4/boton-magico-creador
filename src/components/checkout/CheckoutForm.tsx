@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CreditCard, MapPin, User, Phone, Mail } from 'lucide-react';
-import { useCartOptimized } from '@/hooks/useCartOptimized';
+import { useCart } from '@/hooks/useCart';
 import { useAuthEnhanced } from '@/context/AuthContextEnhanced';
 import { useNotifications } from '@/hooks/useNotifications';
 
@@ -15,7 +15,7 @@ interface CheckoutData {
 }
 
 const CheckoutForm: React.FC = () => {
-  const { items, total, clearCart } = useCartOptimized();
+  const { items, total, clearCart } = useCart();
   const { user, isAuthenticated } = useAuthEnhanced();
   const { showSuccess, showError } = useNotifications();
   
