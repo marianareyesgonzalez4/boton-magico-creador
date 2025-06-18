@@ -4,7 +4,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { AuthProvider } from '@/context/AuthContextEnhanced';
-import Header from '@/components/layout/Header';
 import CookieBanner from '@/components/CookieBanner';
 
 // Pages
@@ -32,30 +31,26 @@ function App() {
       <ThemeProvider defaultTheme="light" storageKey="choco-artesanal-theme">
         <AuthProvider>
           <Router>
-            <div className="App min-h-screen bg-gray-50 dark:bg-gray-900">
-              <Header />
-              <main>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/shop" element={<Shop />} />
-                  <Route path="/productos" element={<Shop />} />
-                  <Route path="/product-detail" element={<ProductDetail />} />
-                  <Route path="/cart" element={<Cart />} />
-                  <Route path="/checkout" element={<Checkout />} />
-                  <Route path="/guest-checkout" element={<GuestCheckout />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/stories" element={<Stories />} />
-                  <Route path="/story-detail" element={<StoryDetail />} />
-                  <Route path="/terms" element={<Terms />} />
-                  <Route path="/order-confirmation" element={<OrderConfirmation />} />
-                  <Route path="/wishlist" element={<Wishlist />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </main>
+            <div className="App">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/shop" element={<Shop />} />
+                <Route path="/product-detail" element={<ProductDetail />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/guest-checkout" element={<GuestCheckout />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/stories" element={<Stories />} />
+                <Route path="/story-detail" element={<StoryDetail />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/order-confirmation" element={<OrderConfirmation />} />
+                <Route path="/wishlist" element={<Wishlist />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
               <Toaster />
               <CookieBanner />
             </div>
