@@ -60,13 +60,13 @@ const FeaturedProducts = () => {
 
   if (loading) {
     return (
-      <section className="py-20 bg-gradient-to-b from-background to-primary-background" id="productos-destacados">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary-text">
+      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-background to-primary-background" id="productos-destacados">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 sm:mb-16 space-y-3 sm:space-y-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary-text">
               Productos Destacados
             </h2>
-            <p className="text-lg text-primary-secondary max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base lg:text-lg text-primary-secondary max-w-2xl mx-auto px-4 sm:px-0">
               Descubre las creaciones más populares de nuestros talentosos artesanos
             </p>
           </div>
@@ -75,7 +75,7 @@ const FeaturedProducts = () => {
             skeletonType="product" 
             count={4}
             text="Cargando productos destacados..."
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
           />
         </div>
       </section>
@@ -84,25 +84,25 @@ const FeaturedProducts = () => {
 
   return (
     <section 
-      className="py-20 bg-gradient-to-b from-background to-primary-background animate-fade-in" 
+      className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-background to-primary-background animate-fade-in" 
       id="productos-destacados"
       aria-labelledby="featured-products-title"
     >
-      <div className="container mx-auto px-4">
-        <header className="text-center mb-16 space-y-4">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <header className="text-center mb-12 sm:mb-16 space-y-3 sm:space-y-4">
           <h2 
             id="featured-products-title"
-            className="text-3xl md:text-4xl font-bold text-primary-text"
+            className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary-text"
           >
             Productos Destacados
           </h2>
-          <p className="text-lg text-primary-secondary max-w-2xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-lg text-primary-secondary max-w-2xl mx-auto leading-relaxed px-4 sm:px-0">
             Descubre las creaciones más populares de nuestros talentosos artesanos, 
             cada una con su propia historia y significado cultural.
           </p>
         </header>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
           {featuredProducts.map((product, index) => (
             <div 
               key={product.id} 
@@ -117,7 +117,7 @@ const FeaturedProducts = () => {
         <footer className="text-center">
           <Link
             to="/shop"
-            className="inline-flex items-center px-8 py-4 bg-primary-action hover:bg-primary-action/90 text-background font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-action focus:ring-offset-2 min-h-[48px]"
+            className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-primary-action hover:bg-primary-action/90 text-background font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-action focus:ring-offset-2 min-h-[48px] text-sm sm:text-base"
             aria-label="Ver todos los productos disponibles en la tienda"
           >
             Ver Todos los Productos

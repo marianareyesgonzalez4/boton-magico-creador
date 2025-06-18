@@ -30,18 +30,18 @@ const stories = [
 
 const CulturalStories: React.FC = () => {
   return (
-    <section className="py-16 bg-[#f0f5f3]">
+    <section className="py-8 sm:py-12 lg:py-16 bg-[#f0f5f3]">
       <Container>
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#111816] mb-4">
+        <div className="text-center mb-8 sm:mb-12 px-4 sm:px-0">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#111816] mb-3 sm:mb-4">
             Cultural Stories
           </h2>
-          <p className="text-lg text-[#608a7c] max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base lg:text-lg text-[#608a7c] max-w-2xl mx-auto">
             Immerse yourself in the rich heritage and traditions behind every handcrafted piece
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 px-4 sm:px-0">
           {stories.map((story) => (
             <article key={story.id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
               <div className="aspect-video overflow-hidden">
@@ -51,16 +51,16 @@ const CulturalStories: React.FC = () => {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-[#111816] mb-3">
+              <div className="p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-semibold text-[#111816] mb-2 sm:mb-3">
                   {story.title}
                 </h3>
-                <p className="text-[#608a7c] mb-4 leading-relaxed">
+                <p className="text-[#608a7c] mb-3 sm:mb-4 leading-relaxed text-sm sm:text-base">
                   {story.excerpt}
                 </p>
                 <Link
                   to={`/stories/${story.slug}`}
-                  className="inline-flex items-center gap-2 text-[#0cf2a5] font-medium hover:gap-3 transition-all duration-200"
+                  className="inline-flex items-center gap-2 text-[#0cf2a5] font-medium hover:gap-3 transition-all duration-200 text-sm sm:text-base"
                 >
                   Read More
                   <ArrowRight className="w-4 h-4" />
@@ -70,10 +70,10 @@ const CulturalStories: React.FC = () => {
           ))}
         </div>
         
-        <div className="text-center mt-12">
+        <div className="text-center mt-8 sm:mt-12 px-4 sm:px-0">
           <Link
             to="/stories"
-            className="btn-modern inline-flex items-center gap-2"
+            className="btn-modern inline-flex items-center gap-2 px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base"
           >
             View All Stories
             <ArrowRight className="w-4 h-4" />
