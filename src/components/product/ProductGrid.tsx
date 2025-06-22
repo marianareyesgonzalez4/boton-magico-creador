@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ProductCard from './ProductCard';
 import ProductFilters, { ProductFilterState } from './ProductFilters';
@@ -20,30 +20,36 @@ const ProductGrid: React.FC<ProductGridProps> = ({
   searchQuery = ''
 }) => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const categoryName = categoryId ? getCategoryById(categoryId)?.name : null;
+  const [filters, setFilters] = useState<ProductFilterState>({
+    category: null,
+    priceRange: [0, 500000],
+    rating: null,
+    availability: 'all',
+    sortBy: 'newest'
+  });
 
-  useEffect(() => {
-    let baseProducts: Product[];
+  const categoryName = useMemo(() => 
+    categoryId ? getCategoryById(categoryId)?.name : null, 
+    [categoryId]
+  );
 
-    if (initialProducts) {
-      baseProducts = [...initialProducts];
-    } else if (categoryId) {
-      baseProducts = getProductsByCategory(categoryId);
-    } else if (searchQuery) {
-      baseProducts = searchProductsByName(searchQuery);
-    } else {
-      baseProducts = [];
-    }
-
-    setProducts(baseProducts);
-    setFilteredProducts(baseProducts);
-    setCurrentPage(1);
+  // Memoized base products calculation
+  const baseProducts = useMemo(() => {
+    if (initialProducts) return [...initialProducts];
+    if (categoryId) return getProductsByCategory(categoryId);
+    if (searchQuery) return searchProductsByName(searchQuery);
+    return [];
   }, [initialProducts, categoryId, searchQuery]);
 
-  const applyFilters = (filters: ProductFilterState) => {
+  useEffect(() => {
+    setProducts(baseProducts);
+    setCurrentPage(1);
+  }, [baseProducts]);
+
+  // Memoized product filtering and sorting
+  const filteredProducts = useMemo(() => {
     let filtered = [...products];
 
     if (filters.category) {
@@ -65,50 +71,46 @@ const ProductGrid: React.FC<ProductGridProps> = ({
       filtered = filtered.filter(product => product.stock > 0 && product.stock <= 10);
     }
 
-    filtered = sortProducts(filtered, filters.sortBy);
-    setFilteredProducts(filtered);
+    // Optimized sorting
+    return filtered.sort((a, b) => {
+      switch (filters.sortBy) {
+        case 'price-asc':
+          return (a.discountedPrice || a.price) - (b.discountedPrice || b.price);
+        case 'price-desc':
+          return (b.discountedPrice || b.price) - (a.discountedPrice || a.price);
+        case 'name-asc':
+          return a.name.localeCompare(b.name);
+        case 'name-desc':
+          return b.name.localeCompare(a.name);
+        case 'rating':
+          return (b.rating || 0) - (a.rating || 0);
+        case 'newest':
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        default:
+          return 0;
+      }
+    });
+  }, [products, filters]);
+
+  const applyFilters = useCallback((newFilters: ProductFilterState) => {
+    setFilters(newFilters);
     setCurrentPage(1);
-  };
+  }, []);
 
-  const sortProducts = (productsToSort: Product[], sortBy: ProductFilterState['sortBy']): Product[] => {
-    const productsCopy = [...productsToSort];
+  // Memoized pagination
+  const paginationData = useMemo(() => {
+    const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+    const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+    const endIndex = startIndex + PRODUCTS_PER_PAGE;
+    const currentProducts = filteredProducts.slice(startIndex, endIndex);
+    
+    return { totalPages, currentProducts };
+  }, [filteredProducts, currentPage]);
 
-    switch (sortBy) {
-      case 'price-asc':
-        return productsCopy.sort((a, b) => {
-          const priceA = a.discountedPrice || a.price;
-          const priceB = b.discountedPrice || b.price;
-          return priceA - priceB;
-        });
-      case 'price-desc':
-        return productsCopy.sort((a, b) => {
-          const priceA = a.discountedPrice || a.price;
-          const priceB = b.discountedPrice || b.price;
-          return priceB - priceA;
-        });
-      case 'name-asc':
-        return productsCopy.sort((a, b) => a.name.localeCompare(b.name));
-      case 'name-desc':
-        return productsCopy.sort((a, b) => b.name.localeCompare(a.name));
-      case 'rating':
-        return productsCopy.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-      case 'newest':
-        return productsCopy.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      default:
-        return productsCopy;
-    }
-  };
-
-  // Pagination logic
-  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
-  const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
-  const endIndex = startIndex + PRODUCTS_PER_PAGE;
-  const currentProducts = filteredProducts.slice(startIndex, endIndex);
-
-  const goToPage = (page: number) => {
+  const goToPage = useCallback((page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  }, []);
 
   if (products.length === 0) {
     return (
@@ -131,12 +133,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({
         </h2>
         <p className="text-modern-gray-500 dark:text-modern-gray-400 font-body">
           {filteredProducts.length} de {products.length} productos
-          {totalPages > 1 && ` · Página ${currentPage} de ${totalPages}`}
+          {paginationData.totalPages > 1 && ` · Página ${currentPage} de ${paginationData.totalPages}`}
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Filters Sidebar */}
         <div className="lg:col-span-1">
           <ProductFilters
             categories={categories}
@@ -146,18 +147,16 @@ const ProductGrid: React.FC<ProductGridProps> = ({
           />
         </div>
 
-        {/* Products Grid */}
         <div className="lg:col-span-3">
-          {currentProducts.length > 0 ? (
+          {paginationData.currentProducts.length > 0 ? (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {currentProducts.map((product) => (
+                {paginationData.currentProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
 
-              {/* Pagination */}
-              {totalPages > 1 && (
+              {paginationData.totalPages > 1 && (
                 <div className="mt-12 flex items-center justify-center space-x-2">
                   <button
                     onClick={() => goToPage(currentPage - 1)}
@@ -167,7 +166,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                     <ChevronLeft size={20} />
                   </button>
                   
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  {Array.from({ length: paginationData.totalPages }, (_, i) => i + 1).map((page) => (
                     <button
                       key={page}
                       onClick={() => goToPage(page)}
@@ -183,7 +182,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                   
                   <button
                     onClick={() => goToPage(currentPage + 1)}
-                    disabled={currentPage === totalPages}
+                    disabled={currentPage === paginationData.totalPages}
                     className="p-2 rounded-xl border border-modern-gray-300 dark:border-modern-gray-600 text-modern-gray-600 dark:text-modern-gray-400 hover:bg-modern-gray-50 dark:hover:bg-modern-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <ChevronRight size={20} />

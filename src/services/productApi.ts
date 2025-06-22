@@ -1,116 +1,90 @@
-import { Product, Category } from '@/types'; // Import from centralized types
-import { products as mockProducts, categories as mockCategories } from '@/data/mockData';
 
-// Read API base URL from environment variables, with a fallback.
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
-// In a real scenario, if API_BASE_URL was crucial and not set, you might throw an error or have a more robust fallback.
+import { Product, Category, ProductWithStory } from '@/types';
 
-const SIMULATED_DELAY = 500; // ms
+// Mock data for categories
+const mockCategories: Category[] = [
+  { id: 1, name: 'Tejidos', slug: 'tejidos', image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400' },
+  { id: 2, name: 'Cerámicas', slug: 'ceramicas', image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400' },
+  { id: 3, name: 'Joyería', slug: 'joyeria', image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400' },
+];
 
-/**
- * Fetches a list of products.
- * Can be filtered by categoryId and/or searchQuery.
- */
-export const fetchProducts = async (categoryId?: number, searchQuery?: string): Promise<Product[]> => {
-  let endpoint = `${API_BASE_URL}/products`;
-  const params = new URLSearchParams();
-  if (categoryId) {
-    params.append('categoryId', categoryId.toString());
+// Products that match the shop data
+const mockProducts: Product[] = [
+  {
+    id: 1,
+    name: 'Canasta Artesanal',
+    slug: 'canasta-artesanal',
+    price: 85000,
+    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400',
+    description: 'Hermosa canasta tejida a mano con técnicas tradicionales',
+    categoryId: 1,
+    producerId: 1,
+    stock: 12,
+    featured: true,
+    rating: 4.8,
+    createdAt: new Date().toISOString(),
+    artisan: 'Carmen López',
+    origin: 'Chocó'
+  },
+  {
+    id: 2,
+    name: 'Collar Tradicional',
+    slug: 'collar-tradicional',
+    price: 45000,
+    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400',
+    description: 'Collar elaborado con materiales naturales del Pacífico',
+    categoryId: 3,
+    producerId: 2,
+    stock: 8,
+    featured: true,
+    rating: 4.9,
+    createdAt: new Date().toISOString(),
+    artisan: 'Ana Mosquera',
+    origin: 'Chocó'
+  },
+  {
+    id: 3,
+    name: 'Vasija Ceremonial',
+    slug: 'vasija-ceremonial',
+    price: 120000,
+    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400',
+    description: 'Vasija de barro cocido con diseños ancestrales',
+    categoryId: 2,
+    producerId: 3,
+    stock: 5,
+    featured: true,
+    rating: 4.7,
+    createdAt: new Date().toISOString(),
+    artisan: 'Miguel Santos',
+    origin: 'Chocó'
   }
-  if (searchQuery) {
-    params.append('search', searchQuery);
-  }
-  if (params.toString()) {
-    endpoint += `?${params.toString()}`;
-  }
-  console.log(`Fetching products from: ${endpoint}`);
-  
-  // The actual data fetching will still return the mock data for now.
-  // In a real app, you would use fetch() or axios() here:
-  // const response = await fetch(endpoint);
-  // if (!response.ok) throw new Error('Failed to fetch products');
-  // const data = await response.json();
-  // return data;
+];
 
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      let filteredProducts = [...mockProducts];
-
-      if (categoryId) {
-        filteredProducts = filteredProducts.filter(product => product.categoryId === categoryId);
-      }
-
-      if (searchQuery) {
-        const lowercasedQuery = searchQuery.toLowerCase();
-        filteredProducts = filteredProducts.filter(product =>
-          product.name.toLowerCase().includes(lowercasedQuery) ||
-          product.description.toLowerCase().includes(lowercasedQuery)
-        );
-      }
-      resolve(filteredProducts);
-    }, SIMULATED_DELAY);
-  });
-};
-
-/**
- * Fetches a single product by its slug.
- */
-export const fetchProductBySlug = async (slug: string): Promise<Product | undefined> => {
-  const endpoint = `${API_BASE_URL}/products/${slug}`;
-  console.log(`Fetching product by slug from: ${endpoint}`);
-  
-  // Mock implementation
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const product = mockProducts.find(p => p.slug === slug);
-      resolve(product);
-    }, SIMULATED_DELAY);
-  });
-};
-
-/**
- * Fetches all categories.
- */
 export const fetchCategories = async (): Promise<Category[]> => {
-  const endpoint = `${API_BASE_URL}/categories`;
-  console.log(`Fetching categories from: ${endpoint}`);
-
-  // Mock implementation
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([...mockCategories]);
-    }, SIMULATED_DELAY);
-  });
+  await new Promise(resolve => setTimeout(resolve, 100));
+  return mockCategories;
 };
 
-/**
- * Fetches a single category by its slug.
- */
-export const fetchCategoryBySlug = async (slug: string): Promise<Category | undefined> => {
-  const endpoint = `${API_BASE_URL}/categories/${slug}`;
-  console.log(`Fetching category by slug from: ${endpoint}`);
-
-  // Mock implementation
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const category = mockCategories.find(c => c.slug === slug);
-      resolve(category);
-    }, SIMULATED_DELAY);
-  });
-};
-
-/**
- * Fetches featured products.
- */
 export const fetchFeaturedProducts = async (): Promise<Product[]> => {
-  const endpoint = `${API_BASE_URL}/products/featured`;
-  console.log(`Fetching featured products from: ${endpoint}`);
+  await new Promise(resolve => setTimeout(resolve, 100));
+  return mockProducts;
+};
 
-  // Mock implementation
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const featured = mockProducts.filter(product => product.featured);
-      resolve(featured);
-    }, SIMULATED_DELAY);
-  });
+export const fetchProductBySlug = async (slug: string): Promise<ProductWithStory | null> => {
+  await new Promise(resolve => setTimeout(resolve, 100));
+  const product = mockProducts.find(p => p.slug === slug);
+  
+  if (!product) return null;
+  
+  return {
+    ...product,
+    story: {
+      id: product.id,
+      title: `La Historia de ${product.name}`,
+      content: `Esta pieza representa siglos de tradición artesanal afrocolombiana del Pacífico. ${product.description} Cada elemento tiene un significado profundo en la cultura chocoana.`,
+      author: product.artisan || 'Artesano Tradicional',
+      readTime: '3 min lectura',
+      culturalSignificance: 'Patrimonio cultural inmaterial del Pacífico colombiano'
+    }
+  };
 };

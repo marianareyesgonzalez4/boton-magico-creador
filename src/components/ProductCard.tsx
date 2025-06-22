@@ -5,20 +5,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "@/store/useStore";
 import { useNotifications } from "@/hooks/useNotifications";
 import ResponsiveImage from "./ResponsiveImage";
-
-interface Product {
-  id: number;
-  name: string;
-  slug: string;
-  price: number;
-  image: string;
-  description: string;
-  artisan: string;
-  origin: string;
-}
+import { Product, ProductWithStory, CartItem } from "@/types";
 
 interface ProductCardProps {
-  product: Product;
+  product: Product | ProductWithStory;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
@@ -27,11 +17,23 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const { showSuccess } = useNotifications();
   const navigate = useNavigate();
   const inWishlist = wishlist.some(item => item.id === product.id);
-
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart(product);
+    
+    const cartItem: CartItem = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      quantity: 1,
+      slug: product.slug,
+      description: product.description,
+      artisan: product.artisan,
+      origin: product.origin
+    };
+    
+    addToCart(cartItem);
     showSuccess(`¡${product.name} añadido al carrito!`);
   };
 
@@ -66,24 +68,26 @@ const ProductCard = ({ product }: ProductCardProps) => {
       tabIndex={0}
       onClick={handleProductClick}
       onKeyDown={handleKeyDown}
-      aria-label={`Ver detalles de ${product.name} por ${product.artisan}`}
+      aria-label={`Ver detalles de ${product.name}${product.artisan ? ` por ${product.artisan}` : ''}`}
     >
       <div className="relative overflow-hidden">
         <ResponsiveImage
           src={product.image}
-          alt={`${product.name} - Artesanía tradicional del ${product.origin} por ${product.artisan}`}
+          alt={`${product.name} - Artesanía tradicional${product.origin ? ` del ${product.origin}` : ''}${product.artisan ? ` por ${product.artisan}` : ''}`}
           className="group-hover:scale-110 transition-transform duration-500"
           aspectRatio="landscape"
           loading="lazy"
           sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
         />
         
-        <div 
-          className="absolute top-3 right-3 bg-background/95 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-semibold text-action border border-action/20"
-          aria-label={`Origen: ${product.origin}`}
-        >
-          {product.origin}
-        </div>
+        {product.origin && (
+          <div 
+            className="absolute top-3 right-3 bg-background/95 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-semibold text-action border border-action/20"
+            aria-label={`Origen: ${product.origin}`}
+          >
+            {product.origin}
+          </div>
+        )}
         
         <Button
           variant="ghost"
@@ -110,9 +114,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <p className="text-sm text-secondary line-clamp-2 mb-2">
             {product.description}
           </p>
-          <p className="text-xs text-action font-medium">
-            Por <span className="font-semibold">{product.artisan}</span>
-          </p>
+          {product.artisan && (
+            <p className="text-xs text-action font-medium">
+              Por <span className="font-semibold">{product.artisan}</span>
+            </p>
+          )}
         </header>
 
         <footer className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">

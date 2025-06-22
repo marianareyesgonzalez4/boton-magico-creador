@@ -14,11 +14,13 @@ import Header from '@/components/layout/Header';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Container from '@/components/layout/Container';
-import { useAuthEnhanced } from '@/context/AuthContextEnhanced';
+import { useStore } from '@/store/useStore';
 import { Product } from '@/types';
 
 const AdminPanel: React.FC = () => {
-  const { isAdmin, user } = useAuthEnhanced();
+  const { auth } = useStore();
+  const { user, isLoggedIn } = auth;
+  const isAdmin = user?.email === 'admin@example.com'; // Simple admin check
   const [activeTab, setActiveTab] = useState('dashboard');
   const [products, setProducts] = useState<Product[]>([]);
 

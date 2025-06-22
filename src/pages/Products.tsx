@@ -10,7 +10,7 @@ import AdvancedSearch from '@/components/search/AdvancedSearch';
 import { fetchFeaturedProducts } from '@/services/productApi';
 import { Product } from '@/types';
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAppContext } from '@/context/AppContext';
+import { useStore } from '@/store/useStore';
 
 const categories = [
   { id: 'all', name: 'Todos', slug: 'all' },
@@ -21,8 +21,7 @@ const categories = [
 ];
 
 const Products = () => {
-  const { state, dispatch } = useAppContext();
-  const { searchQuery, selectedCategory } = state;
+  const { searchQuery, filters, setSearchQuery, updateFilters } = useStore();
 
   const { 
     data: products = [], 
@@ -38,8 +37,8 @@ const Products = () => {
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.description.toLowerCase().includes(searchQuery.toLowerCase());
     
-    const matchesCategory = selectedCategory === 'all' || 
-      product.categoryId.toString() === selectedCategory;
+    const matchesCategory = filters.category === 'all' || 
+      product.categoryId.toString() === filters.category;
     
     return matchesSearch && matchesCategory;
   });
@@ -85,9 +84,9 @@ const Products = () => {
             {categories.map((category) => (
               <button
                 key={category.id}
-                onClick={() => dispatch({ type: 'SET_SELECTED_CATEGORY', payload: category.slug })}
+                onClick={() => updateFilters({ category: category.slug })}
                 className={`px-6 py-2 rounded-xl text-sm font-medium transition-colors ${
-                  selectedCategory === category.slug
+                  filters.category === category.slug
                     ? 'bg-[#0cf2a5] text-white'
                     : 'bg-[#f0f5f3] dark:bg-gray-700 text-[#111816] dark:text-white hover:bg-[#0cf2a5] hover:text-white'
                 }`}

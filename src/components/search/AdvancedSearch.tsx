@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Search, Filter, X } from 'lucide-react';
-import { useAppContext } from '@/context/AppContext';
+import { useStore } from '@/store/useStore';
 
 interface SearchFilters {
   query: string;
@@ -12,11 +12,11 @@ interface SearchFilters {
 }
 
 const AdvancedSearch: React.FC = () => {
-  const { state, dispatch } = useAppContext();
+  const { searchQuery, filters, setSearchQuery, updateFilters } = useStore();
   const [isOpen, setIsOpen] = useState(false);
-  const [filters, setFilters] = useState<SearchFilters>({
-    query: state.searchQuery,
-    category: state.selectedCategory,
+  const [localFilters, setLocalFilters] = useState<SearchFilters>({
+    query: searchQuery,
+    category: filters.category,
     minPrice: 0,
     maxPrice: 500000,
     sortBy: 'name',
@@ -31,8 +31,11 @@ const AdvancedSearch: React.FC = () => {
   ];
 
   const handleSearch = () => {
-    dispatch({ type: 'SET_SEARCH_QUERY', payload: filters.query });
-    dispatch({ type: 'SET_SELECTED_CATEGORY', payload: filters.category });
+    setSearchQuery(localFilters.query);
+    updateFilters({ 
+      category: localFilters.category,
+      sortBy: localFilters.sortBy 
+    });
     setIsOpen(false);
   };
 
@@ -44,9 +47,9 @@ const AdvancedSearch: React.FC = () => {
       maxPrice: 500000,
       sortBy: 'name',
     };
-    setFilters(defaultFilters);
-    dispatch({ type: 'SET_SEARCH_QUERY', payload: '' });
-    dispatch({ type: 'SET_SELECTED_CATEGORY', payload: 'all' });
+    setLocalFilters(defaultFilters);
+    setSearchQuery('');
+    updateFilters({ category: 'all', sortBy: 'name' });
   };
 
   return (
@@ -57,8 +60,8 @@ const AdvancedSearch: React.FC = () => {
         <input
           type="text"
           placeholder="Buscar productos..."
-          value={filters.query}
-          onChange={(e) => setFilters({ ...filters, query: e.target.value })}
+          value={localFilters.query}
+          onChange={(e) => setLocalFilters({ ...localFilters, query: e.target.value })}
           onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
           className="w-full pl-12 pr-16 py-3 border border-[#f0f5f3] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0cf2a5] bg-[#f0f5f3] text-[#111816]"
         />
@@ -92,8 +95,8 @@ const AdvancedSearch: React.FC = () => {
                 Categoría
               </label>
               <select
-                value={filters.category}
-                onChange={(e) => setFilters({ ...filters, category: e.target.value })}
+                value={localFilters.category}
+                onChange={(e) => setLocalFilters({ ...localFilters, category: e.target.value })}
                 className="w-full px-3 py-2 border border-[#f0f5f3] dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0cf2a5] bg-white dark:bg-gray-700 text-[#111816] dark:text-white"
               >
                 {categories.map((category) => (
@@ -110,8 +113,8 @@ const AdvancedSearch: React.FC = () => {
                 Ordenar por
               </label>
               <select
-                value={filters.sortBy}
-                onChange={(e) => setFilters({ ...filters, sortBy: e.target.value as SearchFilters['sortBy'] })}
+                value={localFilters.sortBy}
+                onChange={(e) => setLocalFilters({ ...localFilters, sortBy: e.target.value as SearchFilters['sortBy'] })}
                 className="w-full px-3 py-2 border border-[#f0f5f3] dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0cf2a5] bg-white dark:bg-gray-700 text-[#111816] dark:text-white"
               >
                 <option value="name">Nombre A-Z</option>
@@ -124,7 +127,7 @@ const AdvancedSearch: React.FC = () => {
             {/* Rango de precios */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-[#111816] dark:text-white mb-2">
-                Rango de Precio: ${filters.minPrice.toLocaleString()} - ${filters.maxPrice.toLocaleString()}
+                Rango de Precio: ${localFilters.minPrice.toLocaleString()} - ${localFilters.maxPrice.toLocaleString()}
               </label>
               <div className="flex items-center space-x-4">
                 <input
@@ -132,8 +135,8 @@ const AdvancedSearch: React.FC = () => {
                   min="0"
                   max="500000"
                   step="10000"
-                  value={filters.minPrice}
-                  onChange={(e) => setFilters({ ...filters, minPrice: parseInt(e.target.value) })}
+                  value={localFilters.minPrice}
+                  onChange={(e) => setLocalFilters({ ...localFilters, minPrice: parseInt(e.target.value) })}
                   className="flex-1"
                 />
                 <input
@@ -141,8 +144,8 @@ const AdvancedSearch: React.FC = () => {
                   min="0"
                   max="500000"
                   step="10000"
-                  value={filters.maxPrice}
-                  onChange={(e) => setFilters({ ...filters, maxPrice: parseInt(e.target.value) })}
+                  value={localFilters.maxPrice}
+                  onChange={(e) => setLocalFilters({ ...localFilters, maxPrice: parseInt(e.target.value) })}
                   className="flex-1"
                 />
               </div>

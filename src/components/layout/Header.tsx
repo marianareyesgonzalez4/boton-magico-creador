@@ -19,8 +19,10 @@ const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { user, isAuthenticated, logout } = useAuth();
-  const { itemCount } = useCart();
+  const { items } = useCart();
   const location = useLocation();
+
+  const itemCount = items.length;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

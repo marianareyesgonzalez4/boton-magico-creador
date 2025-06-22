@@ -1,21 +1,9 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { Product, CartItem as BaseCartItem, User as BaseUser, ProductWithStory } from '@/types';
 
-interface Product {
-  id: number;
-  name: string;
-  slug: string;
-  price: number;
-  image: string;
-  description: string;
-  artisan: string;
-  origin: string;
-  category?: string;
-}
-
-interface CartItem extends Product {
-  quantity: number;
+interface CartItem extends BaseCartItem {
   total: number;
 }
 
@@ -30,14 +18,10 @@ interface Address {
   isDefault?: boolean;
 }
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
+interface User extends BaseUser {
   firstName: string;
   lastName: string;
   avatar?: string;
-  phone?: string;
   addresses?: Address[];
 }
 
@@ -66,18 +50,16 @@ interface Store {
   
   // Auth state
   auth: AuthState;
-  
-  // Wishlist state
-  wishlist: Product[];
+    // Wishlist state
+  wishlist: (Product | ProductWithStory)[];
   
   // UI state
   searchQuery: string;
   filters: SearchFilters;
   isLoading: boolean;
   error: string | null;
-  
-  // Cart actions
-  addToCart: (product: Product, quantity?: number) => void;
+    // Cart actions
+  addToCart: (item: BaseCartItem) => void;
   removeFromCart: (productId: number) => void;
   updateCartQuantity: (productId: number, quantity: number) => void;
   clearCart: () => void;
@@ -94,9 +76,8 @@ interface Store {
   updateAddress: (id: string, address: Partial<Address>) => void;
   deleteAddress: (id: string) => void;
   setDefaultAddress: (id: string) => void;
-  
-  // Wishlist actions
-  addToWishlist: (product: Product) => void;
+    // Wishlist actions
+  addToWishlist: (product: Product | ProductWithStory) => void;
   removeFromWishlist: (productId: number) => void;
   
   // UI actions
@@ -112,6 +93,13 @@ const initialFilters: SearchFilters = {
   search: "",
   inStock: true,
   region: "all"
+};
+
+// Optimized cart calculations
+const calculateCartTotals = (items: CartItem[]) => {
+  const count = items.reduce((sum, item) => sum + item.quantity, 0);
+  const total = items.reduce((sum, item) => sum + item.total, 0);
+  return { count, total };
 };
 
 export const useStore = create<Store>()(
@@ -132,57 +120,49 @@ export const useStore = create<Store>()(
       filters: initialFilters,
       isLoading: false,
       error: null,
-      
-      // Cart actions
-      addToCart: (product, quantity = 1) => {
+        // Optimized cart actions
+      addToCart: (item) => {
         const { cartItems } = get();
-        const existingItem = cartItems.find(item => item.id === product.id);
+        const existingItem = cartItems.find(cartItem => cartItem.id === item.id);
         
         let newCartItems: CartItem[];
         
         if (existingItem) {
-          newCartItems = cartItems.map(item =>
-            item.id === product.id
+          newCartItems = cartItems.map(cartItem =>
+            cartItem.id === item.id
               ? { 
-                  ...item, 
-                  quantity: item.quantity + quantity, 
-                  total: (item.quantity + quantity) * item.price 
+                  ...cartItem, 
+                  quantity: cartItem.quantity + item.quantity, 
+                  total: (cartItem.quantity + item.quantity) * cartItem.price 
                 }
-              : item
+              : cartItem
           );
         } else {
           const newItem: CartItem = {
-            ...product,
-            quantity,
-            total: product.price * quantity
+            ...item,
+            total: item.price * item.quantity
           };
           newCartItems = [...cartItems, newItem];
         }
         
-        const newCount = newCartItems.reduce((sum, item) => sum + item.quantity, 0);
-        const newTotal = newCartItems.reduce((sum, item) => sum + item.total, 0);
-        
-        localStorage.setItem('lastCartActivity', Date.now().toString());
+        const { count, total } = calculateCartTotals(newCartItems);
         
         set({
           cartItems: newCartItems,
-          cartCount: newCount,
-          cartTotal: newTotal
+          cartCount: count,
+          cartTotal: total
         });
       },
       
       removeFromCart: (productId) => {
         const { cartItems } = get();
         const newCartItems = cartItems.filter(item => item.id !== productId);
-        const newCount = newCartItems.reduce((sum, item) => sum + item.quantity, 0);
-        const newTotal = newCartItems.reduce((sum, item) => sum + item.total, 0);
-        
-        localStorage.setItem('lastCartActivity', Date.now().toString());
+        const { count, total } = calculateCartTotals(newCartItems);
         
         set({
           cartItems: newCartItems,
-          cartCount: newCount,
-          cartTotal: newTotal
+          cartCount: count,
+          cartTotal: total
         });
       },
       
@@ -196,15 +176,12 @@ export const useStore = create<Store>()(
             : item
         );
         
-        const newCount = newCartItems.reduce((sum, item) => sum + item.quantity, 0);
-        const newTotal = newCartItems.reduce((sum, item) => sum + item.total, 0);
-        
-        localStorage.setItem('lastCartActivity', Date.now().toString());
+        const { count, total } = calculateCartTotals(newCartItems);
         
         set({
           cartItems: newCartItems,
-          cartCount: newCount,
-          cartTotal: newTotal
+          cartCount: count,
+          cartTotal: total
         });
       },
       
@@ -218,7 +195,6 @@ export const useStore = create<Store>()(
       
       // Auth actions
       login: (userData, token) => {
-        localStorage.setItem('lastCartActivity', Date.now().toString());
         set({
           auth: {
             user: userData,
@@ -288,7 +264,7 @@ export const useStore = create<Store>()(
       
       updateAddress: (id, addressData) => {
         const { auth } = get();
-        if (!auth.user || !auth.user.addresses) return;
+        if (!auth.user?.addresses) return;
         
         const updatedAddresses = auth.user.addresses.map(addr =>
           addr.id === id ? { ...addr, ...addressData } : addr
@@ -307,7 +283,7 @@ export const useStore = create<Store>()(
       
       deleteAddress: (id) => {
         const { auth } = get();
-        if (!auth.user || !auth.user.addresses) return;
+        if (!auth.user?.addresses) return;
         
         const updatedAddresses = auth.user.addresses.filter(addr => addr.id !== id);
         
@@ -324,7 +300,7 @@ export const useStore = create<Store>()(
       
       setDefaultAddress: (id) => {
         const { auth } = get();
-        if (!auth.user || !auth.user.addresses) return;
+        if (!auth.user?.addresses) return;
         
         const updatedAddresses = auth.user.addresses.map(addr => ({
           ...addr,
@@ -379,7 +355,7 @@ export const useStore = create<Store>()(
   )
 );
 
-// Selectors for better performance
+// Optimized selectors for better performance
 export const useAuth = () => useStore(state => state.auth);
 export const useCartItems = () => useStore(state => state.cartItems);
 export const useCartCount = () => useStore(state => state.cartCount);

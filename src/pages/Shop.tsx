@@ -13,6 +13,76 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Filter, Grid, List, SlidersHorizontal } from "lucide-react";
 import { PRODUCT_CATEGORIES, PRICE_RANGES, SORT_OPTIONS } from "@/constants/categories";
 
+// Mock data optimizada
+const mockProducts = [
+  {
+    id: 1,
+    name: "Canasta Werregue Tradicional",
+    slug: "canasta-werregue-tradicional",
+    price: 145000,
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDWuak5jgWo871dE3jZNJ_8aDHOp10aVRkJSkUubDDhHyzSfadTmqTTcJDIHCG34XHuEsoQr399x-2AuCDM8q7izUxr7VFLFCePR_mB7ddHoZG1Y36WtsNHFr6oixC2uP4kqrELEFtkEkmwBJDSAirr7D1bnx5ViffcgCxLkRXwvLNuN-7XKOtA02d6kBcJw4spJ-b_xDhfs5GeFSuBp_iHI3yLsjxR7jMwh0KGntIBtUruBRdRqgwsR7KY2QXjcBcaD-zOcolZ",
+    description: "Hermosa canasta tejida con fibra de werregue",
+    category: "cesteria",
+    artisan: "María Eugenia Rentería",
+    origin: "Chocó"
+  },
+  {
+    id: 2,
+    name: "Máscara Ceremonial Tallada",
+    slug: "mascara-ceremonial-tallada", 
+    price: 220000,
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDfdkZHi6mJGrVFvipEnHYxSNdT4c8GZl2Q3UuotA6-ftPzmdTj5hg2KQyYG9M2ltIntGZytn9d1ucB5pbYoQtBGx8oUYKEfL2scolrGal2IJ9Zi4zs_kOYoouEokw8K2t8BsCkcsFY_CPTJQpnZcgVC8-GlDj3CLPhJqjKZ6kDMXgI_xt9_FWXbDbQv7z5_KIFXW3n-QpyZ_v0UDu3V-naoEIISoC4vvW0cuJhrQT592C1P_ag_tOuEG4xYjFZBkR_HbL9vZyQ",
+    description: "Máscara tallada en madera de cativo",
+    category: "tallado",
+    artisan: "Esteban Mosquera",
+    origin: "Chocó"
+  },
+  {
+    id: 3,
+    name: "Collar de Semillas Nativas",
+    slug: "collar-semillas-nativas",
+    price: 85000,
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuACdHKq8dpJVu1OFr11VadzGaSw98CpGJKBtrV90esdnvOmcQhpA5qYnSzOVt_cJ1QyDspxrquXaWnxVN0lqO-OPH5IzXucoqwW0xA4xKVc7KJ-v5kpbpmVbg4ZGIn6VgTNNZ-WZ7Avagzer_SYt1Z8zE3WXkk3Qsbi21wT18nw0hGZTJUiJb3GwcVGzpB6yNbIE32LDlGUjdBO4gB9HK5Z_NqVyZKgse-ZVxv2giWIDYgBsBs6vzTq-HPIw47UR47HGH9iq3qk",
+    description: "Collar elaborado con semillas de la selva",
+    category: "joyeria",
+    artisan: "Yurany Palacios",
+    origin: "Chocó"
+  },
+  {
+    id: 4,
+    name: "Tambor Currulao Artesanal",
+    slug: "tambor-currulao-artesanal",
+    price: 180000,
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDRdgRfqoOraHvKi0q2qUDAVJBVJtdadXA7aFZ1M1eDEIsi03aVASS8H2K0tPFbMJe0eh35A5jWP9sMeVNuQIYEoINt7kJC2erc8vUwXB5wikkd9e3VFoRmLaI6YctlzDQaZAK9MJs6yfOAtCBBRTh2pNKEglQIac794d-s6OYfpSkelReNobGQ7dJg17hoiZIoVVWslSbATj-1Rw2ec9eHOBrdsAhINbaaTN8Dz77LYj2gi6VhWc8XQ4j8cBb-asVmePVmll65",
+    description: "Tambor tradicional para currulao",
+    category: "musica",
+    artisan: "Carlos Moreno",
+    origin: "Chocó"
+  },
+  {
+    id: 5,
+    name: "Tejido Tradicional Chocoano",
+    slug: "tejido-tradicional-chocoano",
+    price: 95000,
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBuRqtTIaVTX8ggRhtSGkmfAbVfqwMCkX0x_QG7jplgAC7I2-tApvb5ZZBtOrPkkCHy50Y5YLT8GWQpUTg0UZdPkhn0a9YifV3YTpcncS_z0cBp2_Qu6CKgAnTJlWhKhgB4rQ-RarJghFH2IrdSAJtS2laKfGCULR92JYexkS2gnKT-bVHA7ZkGGa2HFIPbQTr6b5NiHb9Xop2OBhZdKP51yS4od6aSMl8kcBNiIebDvnWcRkLBoe1bHIZg8oqMacDribbtutVr",
+    description: "Textil artesanal con patrones tradicionales",
+    category: "textiles",
+    artisan: "Ana Lucía Moreno",
+    origin: "Chocó"
+  },
+  {
+    id: 6,
+    name: "Vasija de Barro Tradicional",
+    slug: "vasija-barro-tradicional",
+    price: 120000,
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuC4NKKNBrdjKmefojYoBUYHShZWMp2RSCAqNnFxVnvbrgK3fuCbv1feF6P37mGEkpnOYR59lp8McDKZfjZPPoXWqM6EoB7QR4uMdhr4KbwGxRJYMRk4Zqqe-sD9igP_rSKJ3CEvBxwMD31c1aKVVOrYXDtmutc5i3Ttm_Pt88DZxJGOGHCpBHgIWUWOZbbb3v4-EHQ9irtPxIDXshXCCBy30gSvMrMBUTFQQKDyfGohFVlSztaZDf1rTFvVOLERpQjc5RYmXkSt",
+    description: "Vasija de barro cocido a mano",
+    category: "ceramica",
+    artisan: "Roberto Sinisterra",
+    origin: "Chocó"
+  }
+];
+
 const Shop = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,75 +97,6 @@ const Shop = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
 
-  const mockProducts = [
-    {
-      id: 1,
-      name: "Canasta Werregue Tradicional",
-      slug: "canasta-werregue-tradicional",
-      price: 145000,
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDWuak5jgWo871dE3jZNJ_8aDHOp10aVRkJSkUubDDhHyzSfadTmqTTcJDIHCG34XHuEsoQr399x-2AuCDM8q7izUxr7VFLFCePR_mB7ddHoZG1Y36WtsNHFr6oixC2uP4kqrELEFtkEkmwBJDSAirr7D1bnx5ViffcgCxLkRXwvLNuN-7XKOtA02d6kBcJw4spJ-b_xDhfs5GeFSuBp_iHI3yLsjxR7jMwh0KGntIBtUruBRdRqgwsR7KY2QXjcBcaD-zOcolZ",
-      description: "Hermosa canasta tejida con fibra de werregue",
-      category: "cesteria",
-      artisan: "María Eugenia Rentería",
-      origin: "Chocó"
-    },
-    {
-      id: 2,
-      name: "Máscara Ceremonial Tallada",
-      slug: "mascara-ceremonial-tallada", 
-      price: 220000,
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDfdkZHi6mJGrVFvipEnHYxSNdT4c8GZl2Q3UuotA6-ftPzmdTj5hg2KQyYG9M2ltIntGZytn9d1ucB5pbYoQtBGx8oUYKEfL2scolrGal2IJ9Zi4zs_kOYoouEokw8K2t8BsCkcsFY_CPTJQpnZcgVC8-GlDj3CLPhJqjKZ6kDMXgI_xt9_FWXbDbQv7z5_KIFXW3n-QpyZ_v0UDu3V-naoEIISoC4vvW0cuJhrQT592C1P_ag_tOuEG4xYjFZBkR_HbL9vZyQ",
-      description: "Máscara tallada en madera de cativo",
-      category: "tallado",
-      artisan: "Esteban Mosquera",
-      origin: "Chocó"
-    },
-    {
-      id: 3,
-      name: "Collar de Semillas Nativas",
-      slug: "collar-semillas-nativas",
-      price: 85000,
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuACdHKq8dpJVu1OFr11VadzGaSw98CpGJKBtrV90esdnvOmcQhpA5qYnSzOVt_cJ1QyDspxrquXaWnxVN0lqO-OPH5IzXucoqwW0xA4xKVc7KJ-v5kpbpmVbg4ZGIn6VgTNNZ-WZ7Avagzer_SYt1Z8zE3WXkk3Qsbi21wT18nw0hGZTJUiJb3GwcVGzpB6yNbIE32LDlGUjdBO4gB9HK5Z_NqVyZKgse-ZVxv2giWIDYgBsBs6vzTq-HPIw47UR47HGH9iq3qk",
-      description: "Collar elaborado con semillas de la selva",
-      category: "joyeria",
-      artisan: "Yurany Palacios",
-      origin: "Chocó"
-    },
-    {
-      id: 4,
-      name: "Tambor Currulao Artesanal",
-      slug: "tambor-currulao-artesanal",
-      price: 180000,
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDRdgRfqoOraHvKi0q2qUDAVJBVJtdadXA7aFZ1M1eDEIsi03aVASS8H2K0tPFbMJe0eh35A5jWP9sMeVNuQIYEoINt7kJC2erc8vUwXB5wikkd9e3VFoRmLaI6YctlzDQaZAK9MJs6yfOAtCBBRTh2pNKEglQIac794d-s6OYfpSkelReNobGQ7dJg17hoiZIoVVWslSbATj-1Rw2ec9eHOBrdsAhINbaaTN8Dz77LYj2gi6VhWc8XQ4j8cBb-asVmePVmll65",
-      description: "Tambor tradicional para currulao",
-      category: "musica",
-      artisan: "Carlos Moreno",
-      origin: "Chocó"
-    },
-    {
-      id: 5,
-      name: "Tejido Tradicional Chocoano",
-      slug: "tejido-tradicional-chocoano",
-      price: 95000,
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBuRqtTIaVTX8ggRhtSGkmfAbVfqwMCkX0x_QG7jplgAC7I2-tApvb5ZZBtOrPkkCHy50Y5YLT8GWQpUTg0UZdPkhn0a9YifV3YTpcncS_z0cBp2_Qu6CKgAnTJlWhKhgB4rQ-RarJghFH2IrdSAJtS2laKfGCULR92JYexkS2gnKT-bVHA7ZkGGa2HFIPbQTr6b5NiHb9Xop2OBhZdKP51yS4od6aSMl8kcBNiIebDvnWcRkLBoe1bHIZg8oqMacDribbtutVr",
-      description: "Textil artesanal con patrones tradicionales",
-      category: "textiles",
-      artisan: "Ana Lucía Moreno",
-      origin: "Chocó"
-    },
-    {
-      id: 6,
-      name: "Vasija de Barro Tradicional",
-      slug: "vasija-barro-tradicional",
-      price: 120000,
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuC4NKKNBrdjKmefojYoBUYHShZWMp2RSCAqNnFxVnvbrgK3fuCbv1feF6P37mGEkpnOYR59lp8McDKZfjZPPoXWqM6EoB7QR4uMdhr4KbwGxRJYMRk4Zqqe-sD9igP_rSKJ3CEvBxwMD31c1aKVVOrYXDtmutc5i3Ttm_Pt88DZxJGOGHCpBHgIWUWOZbbb3v4-EHQ9irtPxIDXshXCCBy30gSvMrMBUTFQQKDyfGohFVlSztaZDf1rTFvVOLERpQjc5RYmXkSt",
-      description: "Vasija de barro cocido a mano",
-      category: "ceramica",
-      artisan: "Roberto Sinisterra",
-      origin: "Chocó"
-    }
-  ];
-
   useEffect(() => {
     setTimeout(() => {
       setProducts(mockProducts);
@@ -103,6 +104,7 @@ const Shop = () => {
     }, 500);
   }, []);
 
+  // Memoized filtering logic
   const filteredProducts = useMemo(() => {
     let filtered = products.filter(product => {
       const categoryMatch = filters.category === "all" || product.category === filters.category;
@@ -121,7 +123,7 @@ const Shop = () => {
       return categoryMatch && searchMatch && artisanMatch && priceMatch;
     });
 
-    // Ordenar usando SORT_OPTIONS
+    // Optimized sorting
     if (filters.sortBy === "price-low") {
       filtered = filtered.sort((a, b) => a.price - b.price);
     } else if (filters.sortBy === "price-high") {
@@ -180,7 +182,7 @@ const Shop = () => {
           Nuestra Tienda
         </h1>
 
-        {/* Controles superiores */}
+        {/* Controles superiores optimizados */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 space-y-4 lg:space-y-0 gap-4">
           <div className="flex items-center space-x-4">
             <Button
@@ -230,7 +232,7 @@ const Shop = () => {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar de filtros */}
+          {/* Sidebar de filtros optimizado */}
           <div className={`lg:w-1/4 space-y-6 ${showFilters ? 'block' : 'hidden lg:block'}`}>
             <div className="bg-background border border-secondary/20 rounded-xl p-6 shadow-lg">
               <div className="flex items-center justify-between mb-4">
@@ -244,7 +246,6 @@ const Shop = () => {
               </div>
 
               <div className="space-y-6">
-                {/* Búsqueda */}
                 <div>
                   <Label htmlFor="search" className="text-primary font-medium mb-2 block">
                     Buscar
@@ -259,7 +260,6 @@ const Shop = () => {
                   />
                 </div>
 
-                {/* Categoría */}
                 <div>
                   <Label className="text-primary font-medium mb-2 block">
                     Categoría
@@ -276,7 +276,6 @@ const Shop = () => {
                   </Select>
                 </div>
 
-                {/* Rango de precio */}
                 <div>
                   <Label className="text-primary font-medium mb-2 block">
                     Rango de Precio
@@ -293,7 +292,6 @@ const Shop = () => {
                   </Select>
                 </div>
 
-                {/* Artesano */}
                 <div>
                   <Label htmlFor="artisan" className="text-primary font-medium mb-2 block">
                     Artesano
@@ -311,7 +309,7 @@ const Shop = () => {
             </div>
           </div>
 
-          {/* Productos */}
+          {/* Grid de productos optimizado */}
           <div className="flex-1">
             {filteredProducts.length === 0 ? (
               <div className="text-center py-16">

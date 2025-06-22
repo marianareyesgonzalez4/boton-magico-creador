@@ -29,44 +29,62 @@ export interface Product {
   image: string;
   images?: string[];
   categoryId: number;
-  producerId: number; // Assuming Producer type will be used if needed
+  producerId: number;
   stock: number;
   featured: boolean;
   rating?: number;
   createdAt: string;
+  artisan?: string;
+  origin?: string;
+}
+
+export interface ProductWithStory extends Product {
+  story?: {
+    id: number;
+    title: string;
+    content: string;
+    author: string;
+    readTime: string;
+    culturalSignificance: string;
+  };
 }
 
 export interface User {
   id: number;
   name: string;
   email: string;
-  password?: string; // Made optional, typically not stored in frontend state after login
+  password?: string;
   address?: string;
   phone?: string;
 }
 
 export interface CartItem {
-  productId: number;
+  id: number;
+  name: string;
+  price: number;
+  image: string;
   quantity: number;
-  product?: Product; // Optional: To store product details for cart display
+  slug: string;
+  description: string;
+  artisan?: string;
+  origin?: string;
 }
 
 export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'canceled';
 
 export interface Order {
   id: number;
-  userId: number; // Linked to User
+  userId: number;
   status: OrderStatus;
   total: number;
   createdAt: string;
   updatedAt: string;
-  // items: OrderDetail[]; // An order would typically contain its details
 }
 
 export interface OrderDetail {
   id: number;
-  orderId: number; // Linked to Order
-  productId: number; // Linked to Product
+  orderId: number;
+  productId: number;
   quantity: number;
-  price: number; // Price at the time of order
+  price: number;
 }
