@@ -39,6 +39,12 @@ class CartService {
     console.log('Syncing local cart with server');
     return apiClient.post<CartDto>(`${API_CONFIG.ENDPOINTS.CART}/sync`, { items });
   }
+
+  // Method to update entire cart (for compatibility with existing hooks)
+  async updateCart(cart: CartDto): Promise<CartDto> {
+    console.log('Updating entire cart');
+    return apiClient.put<CartDto>(API_CONFIG.ENDPOINTS.CART, cart);
+  }
 }
 
 export const cartService = new CartService();

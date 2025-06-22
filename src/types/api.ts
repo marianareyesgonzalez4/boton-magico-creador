@@ -42,6 +42,18 @@ export interface CategoryDto {
   updatedAt: string;
 }
 
+export interface ProducerDto {
+  id: number;
+  name: string;
+  description?: string;
+  location?: string;
+  image?: string;
+  featured: boolean;
+  foundedYear?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface CartItemDto {
   productId: number;
   quantity: number;
@@ -73,6 +85,17 @@ export interface OrderDto {
   total: number;
   createdAt: string;
   updatedAt: string;
+}
+
+// Paginated Response
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  };
 }
 
 // Request DTOs
