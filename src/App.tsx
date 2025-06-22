@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/ui/theme-provider';
-import { ApiAuthProvider } from '@/context/ApiAuthContext';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import CookieBanner from '@/components/CookieBanner';
 
@@ -26,10 +25,11 @@ import Terms from '@/pages/Terms';
 import OrderConfirmation from '@/pages/OrderConfirmation';
 import Wishlist from '@/pages/Wishlist';
 
+// Optimized query client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000,
+      staleTime: 5 * 60 * 1000, // 5 minutes
       refetchOnWindowFocus: false,
     },
   },
@@ -40,33 +40,31 @@ function App() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider defaultTheme="light" storageKey="choco-artesanal-theme">
-          <ApiAuthProvider>
-            <Router>
-              <div className="App">
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/shop" element={<Shop />} />
-                  <Route path="/product-detail" element={<ProductDetail />} />
-                  <Route path="/cart" element={<Cart />} />
-                  <Route path="/checkout" element={<Checkout />} />
-                  <Route path="/guest-checkout" element={<GuestCheckout />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/stories" element={<Stories />} />
-                  <Route path="/story-detail" element={<StoryDetail />} />
-                  <Route path="/terms" element={<Terms />} />
-                  <Route path="/order-confirmation" element={<OrderConfirmation />} />
-                  <Route path="/wishlist" element={<Wishlist />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-                <Toaster />
-                <CookieBanner />
-              </div>
-            </Router>
-          </ApiAuthProvider>
+          <Router>
+            <div className="App">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/shop" element={<Shop />} />
+                <Route path="/product-detail" element={<ProductDetail />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/guest-checkout" element={<GuestCheckout />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/stories" element={<Stories />} />
+                <Route path="/story-detail" element={<StoryDetail />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/order-confirmation" element={<OrderConfirmation />} />
+                <Route path="/wishlist" element={<Wishlist />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <Toaster />
+              <CookieBanner />
+            </div>
+          </Router>
         </ThemeProvider>
       </QueryClientProvider>
     </ErrorBoundary>

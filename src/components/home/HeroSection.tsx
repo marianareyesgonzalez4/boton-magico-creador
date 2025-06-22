@@ -19,7 +19,7 @@ const HeroSection: React.FC = () => {
             Authentic handcrafted treasures from Colombian Pacific artisans, preserving ancestral traditions and empowering local communities.
           </p>
           <Link
-            to="/shop"
+            to="/productos"
             className="btn-modern-primary inline-flex items-center gap-2 px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base"
           >
             Shop Now

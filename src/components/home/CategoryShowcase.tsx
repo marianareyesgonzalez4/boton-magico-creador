@@ -47,7 +47,7 @@ const CategoryShowcase: React.FC = () => {
           {categories.map((category) => (
             <Link
               key={category.slug}
-              to={`/shop?categoria=${category.slug}`}
+              to={`/productos?categoria=${category.slug}`}
               className="group block"
             >
               <div className="relative overflow-hidden rounded-xl aspect-square mb-3 sm:mb-4">

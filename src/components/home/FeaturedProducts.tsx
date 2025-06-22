@@ -2,20 +2,26 @@
 import React from 'react';
 import { ArrowRight, ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import ProductCard from '../product/ProductCard';
-import { useFeaturedProducts } from '@/hooks/api/useProducts';
+import { fetchFeaturedProducts } from '@/services/productApi';
+import { Product } from '@/types';
 import { Skeleton } from "@/components/ui/skeleton";
 import Container from '@/components/layout/Container';
 
 const FeaturedProducts: React.FC = () => {
   const { 
-    data: featuredProducts = [], 
+    data: allFeaturedProducts, 
     isLoading, 
     isError,
     error
-  } = useFeaturedProducts();
+  } = useQuery<Product[], Error>({
+    queryKey: ['featuredProducts'],
+    queryFn: fetchFeaturedProducts,
+    staleTime: 60000,
+  });
 
-  const displayedProducts = featuredProducts.slice(0, 3);
+  const displayedFeaturedProducts = allFeaturedProducts?.slice(0, 3) || [];
 
   const renderSkeletons = () => (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
@@ -45,7 +51,7 @@ const FeaturedProducts: React.FC = () => {
             </p>
           </div>
           <Link 
-            to="/shop" 
+            to="/productos" 
             className="btn-modern flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base"
           >
             View All Products
@@ -62,10 +68,10 @@ const FeaturedProducts: React.FC = () => {
             </div>
           )}
           
-          {!isLoading && !isError && displayedProducts.length > 0 && (
+          {!isLoading && !isError && displayedFeaturedProducts.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-              {displayedProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+              {displayedFeaturedProducts.map((producto) => (
+                <ProductCard key={producto.id} product={producto} />
               ))}
             </div>
           )}

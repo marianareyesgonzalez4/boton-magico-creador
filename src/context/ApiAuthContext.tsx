@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import { useAuth as useApiAuth } from '@/hooks/api/useAuth';
 import type { UserDto } from '@/types/api';
 
@@ -20,6 +20,13 @@ const ApiAuthContext = createContext<ApiAuthContextType | undefined>(undefined);
 
 export const ApiAuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const authHook = useApiAuth();
+
+  useEffect(() => {
+    // Auto-refresh user data when the component mounts if authenticated
+    if (authHook.isAuthenticated && !authHook.user && !authHook.isLoading) {
+      // The user query will automatically run if isAuthenticated is true
+    }
+  }, [authHook.isAuthenticated, authHook.user, authHook.isLoading]);
 
   const contextValue: ApiAuthContextType = {
     user: authHook.user,

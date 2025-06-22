@@ -60,7 +60,7 @@ const CategoryList: React.FC = () => {
             {mainCategories.map((category) => (
               <Link 
                 key={category.id} 
-                to={`/shop?categoria=${category.slug}`}
+                to={`/productos?categoria=${category.slug}`}
                 className="group"
               >
                 <div className="card-modern h-80 relative overflow-hidden hover:scale-[1.02] transition-transform duration-300">
@@ -85,7 +85,7 @@ const CategoryList: React.FC = () => {
         {!isLoading && !isError && categories && categories.length > 0 && (
           <div className="mt-12 text-center">
             <Link 
-              to="/shop" 
+              to="/productos" 
               className="inline-flex items-center text-modern-green-600 dark:text-modern-green-400 hover:text-modern-green-700 dark:hover:text-modern-green-300 transition-colors font-medium text-lg group"
             >
               Ver todas las categorías
