@@ -60,6 +60,7 @@ export interface User {
 
 export interface CartItem {
   id: number;
+  productId: number;
   name: string;
   price: number;
   image: string;
@@ -68,6 +69,7 @@ export interface CartItem {
   description: string;
   artisan?: string;
   origin?: string;
+  product?: Product;
 }
 
 export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'canceled';

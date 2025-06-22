@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -76,7 +75,7 @@ const Register = () => {
     // Simulate API call
     setTimeout(() => {
       const userData = {
-        id: "user-" + Date.now(),
+        id: Date.now(), // Use numeric ID
         name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
         firstName: formData.firstName,

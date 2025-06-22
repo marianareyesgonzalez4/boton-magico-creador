@@ -14,7 +14,7 @@ export const useApiProducts = () => {
     error,
   } = useQuery({
     queryKey: ['products'],
-    queryFn: productService.getAllProducts,
+    queryFn: () => productService.getAllProducts(),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 

@@ -23,7 +23,7 @@ export type CartAction =
 // Export for testing
 export const calculateTotal = (items: CartItem[]): number => {
   return items.reduce((total, item) => {
-    const price = item.product!.discountedPrice || item.product!.price;
+    const price = item.product?.discountedPrice || item.product?.price || item.price;
     return total + price * item.quantity;
   }, 0);
 };
@@ -33,7 +33,7 @@ export const cartReducer = (state: CartState, action: CartAction): CartState => 
   switch (action.type) {
     case 'ADD_TO_CART': {
       const { product, quantity } = action.payload;
-      const existingItemIndex = state.items.findIndex(item => item.product!.id === product.id);
+      const existingItemIndex = state.items.findIndex(item => item.productId === product.id);
       
       if (existingItemIndex >= 0) {
         // Item already exists, update quantity
@@ -50,7 +50,20 @@ export const cartReducer = (state: CartState, action: CartAction): CartState => 
       }
       
       // Item doesn't exist, add it
-      const updatedItems = [...state.items, { productId: product.id, quantity, product }];
+      const newCartItem: CartItem = {
+        id: product.id,
+        productId: product.id,
+        name: product.name,
+        price: product.discountedPrice || product.price,
+        image: product.image,
+        quantity,
+        slug: product.slug,
+        description: product.description,
+        artisan: product.artisan,
+        origin: product.origin,
+        product
+      };
+      const updatedItems = [...state.items, newCartItem];
       return {
         ...state,
         items: updatedItems,
@@ -59,7 +72,7 @@ export const cartReducer = (state: CartState, action: CartAction): CartState => 
     }
     
     case 'REMOVE_FROM_CART': {
-      const updatedItems = state.items.filter(item => item.product!.id !== action.payload);
+      const updatedItems = state.items.filter(item => item.productId !== action.payload);
       return {
         ...state,
         items: updatedItems,
@@ -75,7 +88,7 @@ export const cartReducer = (state: CartState, action: CartAction): CartState => 
       }
       
       const updatedItems = state.items.map(item => 
-        item.product!.id === productId ? { ...item, quantity } : item
+        item.productId === productId ? { ...item, quantity } : item
       );
       
       return {
@@ -119,7 +132,20 @@ const loadCartFromStorage = (): CartItem[] => {
     const cartItems = parsedItems.map(item => {
       const product = getProductById(item.productId);
       if (!product) return null;
-      return { productId: item.productId, quantity: item.quantity, product };
+      
+      return {
+        id: product.id,
+        productId: item.productId,
+        name: product.name,
+        price: product.discountedPrice || product.price,
+        image: product.image,
+        quantity: item.quantity,
+        slug: product.slug,
+        description: product.description,
+        artisan: product.artisan,
+        origin: product.origin,
+        product
+      } as CartItem;
     }).filter(Boolean) as CartItem[];
     
     return cartItems;
