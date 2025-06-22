@@ -1,36 +1,44 @@
 
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from '@/hooks/use-toast';
 
 export const useNotifications = () => {
   const { toast } = useToast();
 
-  const showSuccess = (message: string) => {
+  const showSuccess = (message: string, description?: string) => {
     toast({
-      title: "Éxito",
-      description: message,
-      variant: "default"
+      title: message,
+      description,
+      variant: 'default',
     });
   };
 
-  const showError = (message: string) => {
+  const showError = (message: string, description?: string) => {
     toast({
-      title: "Error",
-      description: message,
-      variant: "destructive"
+      title: message,
+      description,
+      variant: 'destructive',
     });
   };
 
-  const showInfo = (message: string) => {
+  const showWarning = (message: string, description?: string) => {
     toast({
-      title: "Información",
-      description: message,
-      variant: "default"
+      title: message,
+      description,
+      // Note: You might want to add a warning variant to your toast component
+    });
+  };
+
+  const showInfo = (message: string, description?: string) => {
+    toast({
+      title: message,
+      description,
     });
   };
 
   return {
     showSuccess,
     showError,
-    showInfo
+    showWarning,
+    showInfo,
   };
 };

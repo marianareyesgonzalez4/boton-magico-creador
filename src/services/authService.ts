@@ -1,56 +1,83 @@
 
-import { apiRequest, TokenManager, API_CONFIG } from '@/config/api';
-import type { LoginRequestDto, RegisterRequestDto, AuthResponseDto } from '@/types/api';
+import { apiClient } from './apiClient';
+import { TokenManager } from '@/utils/tokenManager';
+import { API_CONFIG } from '@/config/apiConfig';
+import type { 
+  LoginRequestDto, 
+  RegisterRequestDto, 
+  AuthResponseDto, 
+  UserDto 
+} from '@/types/api';
 
-export const authService = {
+class AuthService {
   async login(credentials: LoginRequestDto): Promise<AuthResponseDto> {
-    console.log('Logging in user:', credentials.email);
+    console.log('Attempting login for:', credentials.email);
     
-    const response = await apiRequest<AuthResponseDto>(
+    const response = await apiClient.post<AuthResponseDto>(
       API_CONFIG.ENDPOINTS.AUTH.LOGIN,
-      {
-        method: 'POST',
-        body: JSON.stringify(credentials),
-      }
+      credentials
     );
     
-    if (response.token) {
-      TokenManager.setToken(response.token);
-      console.log('Login successful, token stored');
+    if (response.accessToken) {
+      TokenManager.setTokens(
+        response.accessToken,
+        response.refreshToken,
+        response.expiresIn
+      );
+      console.log('Login successful, tokens stored');
     }
     
     return response;
-  },
+  }
 
   async register(userData: RegisterRequestDto): Promise<AuthResponseDto> {
-    console.log('Registering user:', userData.email);
+    console.log('Attempting registration for:', userData.email);
     
-    const response = await apiRequest<AuthResponseDto>(
+    const response = await apiClient.post<AuthResponseDto>(
       API_CONFIG.ENDPOINTS.AUTH.REGISTER,
-      {
-        method: 'POST',
-        body: JSON.stringify(userData),
-      }
+      userData
     );
     
-    if (response.token) {
-      TokenManager.setToken(response.token);
-      console.log('Registration successful, token stored');
+    if (response.accessToken) {
+      TokenManager.setTokens(
+        response.accessToken,
+        response.refreshToken,
+        response.expiresIn
+      );
+      console.log('Registration successful, tokens stored');
     }
     
     return response;
-  },
+  }
 
-  logout(): void {
-    TokenManager.removeToken();
-    console.log('User logged out, token removed');
-  },
+  async logout(): Promise<void> {
+    try {
+      await apiClient.post(API_CONFIG.ENDPOINTS.AUTH.LOGOUT);
+    } catch (error) {
+      console.warn('Logout API call failed:', error);
+    } finally {
+      TokenManager.clearTokens();
+      console.log('User logged out, tokens cleared');
+    }
+  }
+
+  async getCurrentUser(): Promise<UserDto> {
+    console.log('Fetching current user profile');
+    return apiClient.get<UserDto>(API_CONFIG.ENDPOINTS.AUTH.PROFILE);
+  }
+
+  async updateProfile(userData: Partial<UserDto>): Promise<UserDto> {
+    console.log('Updating user profile');
+    return apiClient.put<UserDto>(API_CONFIG.ENDPOINTS.AUTH.PROFILE, userData);
+  }
 
   isAuthenticated(): boolean {
     return TokenManager.isAuthenticated();
-  },
+  }
 
   getToken(): string | null {
-    return TokenManager.getToken();
-  },
-};
+    return TokenManager.getAccessToken();
+  }
+}
+
+export const authService = new AuthService();

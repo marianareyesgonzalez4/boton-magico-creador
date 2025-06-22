@@ -1,42 +1,33 @@
 
-// API Types matching your .NET backend DTOs
-
-export interface RegisterRequestDto {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-}
-
-export interface LoginRequestDto {
-  email: string;
-  password: string;
-}
-
+// API Data Transfer Objects
 export interface UserDto {
-  id: string;
+  id: number;
   firstName: string;
   lastName: string;
   email: string;
-  role?: string;
-}
-
-export interface AuthResponseDto {
-  token: string;
-  user: UserDto;
+  phone?: string;
+  address?: string;
+  avatar?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ProductDto {
   id: number;
   name: string;
+  slug: string;
   description: string;
   price: number;
   discountedPrice?: number;
   image: string;
+  images?: string[];
   categoryId: number;
   producerId: number;
   stock: number;
-  isActive: boolean;
+  featured: boolean;
+  rating?: number;
+  artisan?: string;
+  origin?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -44,60 +35,96 @@ export interface ProductDto {
 export interface CategoryDto {
   id: number;
   name: string;
-  description: string;
+  slug: string;
+  description?: string;
   image?: string;
-}
-
-export interface ProducerDto {
-  id: number;
-  name: string;
-  description: string;
-  location: string;
-  image?: string;
-  isFeatured: boolean;
-  foundationYear?: number;
-}
-
-export interface CartDto {
-  userId: string;
-  items: CartItemDto[];
-  total: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CartItemDto {
   productId: number;
   quantity: number;
   price: number;
-  product?: ProductDto;
 }
 
-export interface CreateOrderRequestDto {
-  shippingAddress: string;
-  paymentMethod: string;
-  orderDetails: CreateOrderDetailDto[];
-}
-
-export interface CreateOrderDetailDto {
-  productId: number;
-  quantity: number;
-  unitPrice: number;
+export interface CartDto {
+  id: number;
+  userId: number;
+  items: CartItemDto[];
+  total: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface OrderDto {
   id: number;
-  userId: string;
-  orderDate: string;
-  shippingAddress: string;
+  userId: number;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  items: CartItemDto[];
+  shippingAddress: {
+    name: string;
+    address: string;
+    city: string;
+    zipCode: string;
+    phone: string;
+  };
   paymentMethod: string;
   total: number;
-  status: string;
-  orderDetails: OrderDetailDto[];
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface OrderDetailDto {
-  id: number;
-  productId: number;
-  quantity: number;
-  unitPrice: number;
-  product?: ProductDto;
+// Request DTOs
+export interface LoginRequestDto {
+  email: string;
+  password: string;
+}
+
+export interface RegisterRequestDto {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  phone?: string;
+  address?: string;
+}
+
+export interface AuthResponseDto {
+  user: UserDto;
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+}
+
+export interface CreateOrderRequestDto {
+  items: CartItemDto[];
+  shippingAddress: {
+    name: string;
+    address: string;
+    city: string;
+    zipCode: string;
+    phone: string;
+  };
+  paymentMethod: string;
+  total: number;
+}
+
+export interface ProductFilters {
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  artisan?: string;
+  region?: string;
+  inStock?: boolean;
+  featured?: boolean;
+  sortBy?: 'price' | 'name' | 'date' | 'rating';
+  sortOrder?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
+}
+
+export interface SearchParams {
+  query: string;
+  filters?: ProductFilters;
 }

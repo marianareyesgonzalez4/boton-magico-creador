@@ -1,38 +1,68 @@
 
-import { apiRequest, API_CONFIG } from '@/config/api';
-import type { ProductDto } from '@/types/api';
+import { apiClient } from './apiClient';
+import { API_CONFIG } from '@/config/apiConfig';
+import type { 
+  ProductDto, 
+  ProductFilters, 
+  SearchParams,
+  PaginatedResponse 
+} from '@/types/api';
 
-export const productService = {
-  async getAllProducts(): Promise<ProductDto[]> {
-    console.log('Fetching all products from API');
-    return apiRequest<ProductDto[]>(API_CONFIG.ENDPOINTS.PRODUCTS);
-  },
+class ProductService {
+  async getAllProducts(filters?: ProductFilters): Promise<PaginatedResponse<ProductDto>> {
+    console.log('Fetching products with filters:', filters);
+    return apiClient.get<PaginatedResponse<ProductDto>>(
+      API_CONFIG.ENDPOINTS.PRODUCTS.BASE,
+      filters
+    );
+  }
 
   async getProductById(id: number): Promise<ProductDto> {
     console.log(`Fetching product with ID: ${id}`);
-    return apiRequest<ProductDto>(`${API_CONFIG.ENDPOINTS.PRODUCTS}/${id}`);
-  },
+    return apiClient.get<ProductDto>(`${API_CONFIG.ENDPOINTS.PRODUCTS.BASE}/${id}`);
+  }
 
+  async getProductBySlug(slug: string): Promise<ProductDto> {
+    console.log(`Fetching product with slug: ${slug}`);
+    return apiClient.get<ProductDto>(`${API_CONFIG.ENDPOINTS.PRODUCTS.BY_SLUG}/${slug}`);
+  }
+
+  async getFeaturedProducts(): Promise<ProductDto[]> {
+    console.log('Fetching featured products');
+    return apiClient.get<ProductDto[]>(API_CONFIG.ENDPOINTS.PRODUCTS.FEATURED);
+  }
+
+  async searchProducts(params: SearchParams): Promise<PaginatedResponse<ProductDto>> {
+    console.log('Searching products:', params);
+    return apiClient.get<PaginatedResponse<ProductDto>>(
+      API_CONFIG.ENDPOINTS.PRODUCTS.SEARCH,
+      params
+    );
+  }
+
+  async getProductsByCategory(categoryId: number, filters?: ProductFilters): Promise<PaginatedResponse<ProductDto>> {
+    console.log(`Fetching products for category: ${categoryId}`);
+    return apiClient.get<PaginatedResponse<ProductDto>>(
+      `${API_CONFIG.ENDPOINTS.PRODUCTS.BY_CATEGORY}/${categoryId}`,
+      filters
+    );
+  }
+
+  // Admin methods
   async createProduct(product: Omit<ProductDto, 'id' | 'createdAt' | 'updatedAt'>): Promise<ProductDto> {
     console.log('Creating new product:', product.name);
-    return apiRequest<ProductDto>(API_CONFIG.ENDPOINTS.PRODUCTS, {
-      method: 'POST',
-      body: JSON.stringify(product),
-    });
-  },
+    return apiClient.post<ProductDto>(API_CONFIG.ENDPOINTS.PRODUCTS.BASE, product);
+  }
 
-  async updateProduct(id: number, product: Partial<ProductDto>): Promise<void> {
+  async updateProduct(id: number, product: Partial<ProductDto>): Promise<ProductDto> {
     console.log(`Updating product with ID: ${id}`);
-    await apiRequest<void>(`${API_CONFIG.ENDPOINTS.PRODUCTS}/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify({ ...product, id }),
-    });
-  },
+    return apiClient.put<ProductDto>(`${API_CONFIG.ENDPOINTS.PRODUCTS.BASE}/${id}`, product);
+  }
 
   async deleteProduct(id: number): Promise<void> {
     console.log(`Deleting product with ID: ${id}`);
-    await apiRequest<void>(`${API_CONFIG.ENDPOINTS.PRODUCTS}/${id}`, {
-      method: 'DELETE',
-    });
-  },
-};
+    await apiClient.delete(`${API_CONFIG.ENDPOINTS.PRODUCTS.BASE}/${id}`);
+  }
+}
+
+export const productService = new ProductService();
