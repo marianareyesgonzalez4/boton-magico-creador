@@ -43,6 +43,7 @@ const ProductDetail = () => {
     
     const cartItem: CartItem = {
       id: product.id,
+      productId: product.id, // Add missing productId property
       name: product.name,
       price: product.price,
       image: product.image,
@@ -65,7 +66,7 @@ const ProductDetail = () => {
       showSuccess(`${product.name} eliminado de favoritos`);
     } else {
       addToWishlist(product);
-      showSuccess(`¡${product.name} añadido a favoritos!`);
+      showSuccess(`${product.name} añadido a favoritos!`);
     }
   };
 

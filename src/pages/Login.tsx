@@ -63,7 +63,7 @@ const Login = () => {
       // Mock successful login - No API needed
       if (formData.email && formData.password) {
         const userData = {
-          id: "user-1",
+          id: Date.now(), // Use numeric ID instead of string
           name: formData.email.split('@')[0],
           email: formData.email,
           firstName: formData.email.split('@')[0],
