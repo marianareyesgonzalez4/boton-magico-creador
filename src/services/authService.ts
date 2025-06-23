@@ -1,7 +1,7 @@
 
 import { apiClient } from './apiClient';
 import { TokenManager } from '@/utils/tokenManager';
-import { API_CONFIG } from '@/config/apiConfig';
+import { API_CONFIG } from '@/config/api';
 import type { 
   LoginRequestDto, 
   RegisterRequestDto, 

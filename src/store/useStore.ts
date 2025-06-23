@@ -50,7 +50,8 @@ interface Store {
   
   // Auth state
   auth: AuthState;
-    // Wishlist state
+  
+  // Wishlist state
   wishlist: (Product | ProductWithStory)[];
   
   // UI state
@@ -58,7 +59,8 @@ interface Store {
   filters: SearchFilters;
   isLoading: boolean;
   error: string | null;
-    // Cart actions
+  
+  // Cart actions
   addToCart: (item: BaseCartItem) => void;
   removeFromCart: (productId: number) => void;
   updateCartQuantity: (productId: number, quantity: number) => void;
@@ -76,7 +78,8 @@ interface Store {
   updateAddress: (id: string, address: Partial<Address>) => void;
   deleteAddress: (id: string) => void;
   setDefaultAddress: (id: string) => void;
-    // Wishlist actions
+  
+  // Wishlist actions
   addToWishlist: (product: Product | ProductWithStory) => void;
   removeFromWishlist: (productId: number) => void;
   
@@ -95,7 +98,6 @@ const initialFilters: SearchFilters = {
   region: "all"
 };
 
-// Optimized cart calculations
 const calculateCartTotals = (items: CartItem[]) => {
   const count = items.reduce((sum, item) => sum + item.quantity, 0);
   const total = items.reduce((sum, item) => sum + item.total, 0);
@@ -120,7 +122,8 @@ export const useStore = create<Store>()(
       filters: initialFilters,
       isLoading: false,
       error: null,
-        // Optimized cart actions
+      
+      // Cart actions
       addToCart: (item) => {
         const { cartItems } = get();
         const existingItem = cartItems.find(cartItem => cartItem.id === item.id);
@@ -355,7 +358,7 @@ export const useStore = create<Store>()(
   )
 );
 
-// Optimized selectors for better performance
+// Optimized selectors
 export const useAuth = () => useStore(state => state.auth);
 export const useCartItems = () => useStore(state => state.cartItems);
 export const useCartCount = () => useStore(state => state.cartCount);

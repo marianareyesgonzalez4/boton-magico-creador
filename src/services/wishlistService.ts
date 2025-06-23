@@ -1,6 +1,6 @@
 
 import { apiClient } from './apiClient';
-import { API_CONFIG } from '@/config/apiConfig';
+import { API_CONFIG } from '@/config/api';
 import type { ProductDto } from '@/types/api';
 
 export interface WishlistDto {

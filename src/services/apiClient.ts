@@ -1,5 +1,5 @@
 
-import { API_CONFIG, HTTP_STATUS } from '@/config/apiConfig';
+import { API_CONFIG, HTTP_STATUS } from '@/config/api';
 import { TokenManager } from '@/utils/tokenManager';
 
 export interface ApiResponse<T = any> {
@@ -85,7 +85,6 @@ class ApiClient {
     try {
       const accessToken = TokenManager.getAccessToken();
       
-      // Auto-refresh token if expired
       if (accessToken && TokenManager.isTokenExpired()) {
         const refreshed = await this.refreshToken();
         if (!refreshed) {
@@ -115,7 +114,6 @@ class ApiClient {
 
       if (!response.ok) {
         if (response.status === HTTP_STATUS.UNAUTHORIZED) {
-          // Try to refresh token once
           if (attempt === 1 && await this.refreshToken()) {
             return this.makeRequest<T>(url, options, attempt + 1);
           }

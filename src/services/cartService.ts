@@ -1,6 +1,6 @@
 
 import { apiClient } from './apiClient';
-import { API_CONFIG } from '@/config/apiConfig';
+import { API_CONFIG } from '@/config/api';
 import type { CartDto, CartItemDto } from '@/types/api';
 
 class CartService {
@@ -40,7 +40,6 @@ class CartService {
     return apiClient.post<CartDto>(`${API_CONFIG.ENDPOINTS.CART}/sync`, { items });
   }
 
-  // Method to update entire cart (for compatibility with existing hooks)
   async updateCart(cart: CartDto): Promise<CartDto> {
     console.log('Updating entire cart');
     return apiClient.put<CartDto>(API_CONFIG.ENDPOINTS.CART, cart);
